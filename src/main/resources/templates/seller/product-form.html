@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(${isEdit ? 'Edit Product' : 'Add New Product'})}"></head>
+<body>
+
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container-fluid px-3 px-lg-5 py-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="fw-bold mb-1" th:text="${isEdit ? 'Edit Supermarket Product' : 'Add New Product'}">Product Form</h2>
+            <p class="text-muted small mb-0">Provide accurate catalogue attributes, realistic pricing, and inventory quantities</p>
+        </div>
+        <a th:href="@{/seller/products}" class="btn btn-outline-secondary btn-sm fw-semibold">
+            <i class="bi bi-arrow-left me-1"></i> Back to Products
+        </a>
+    </div>
+
+    <div class="card border-0 shadow-sm p-4 max-w-900" style="border-radius: 16px;">
+        <form th:action="@{/seller/products/save}" th:object="${productDto}" method="POST">
+            <input type="hidden" th:field="*{id}">
+
+            <div class="row g-3 mb-3">
+                <div class="col-12 col-md-8">
+                    <label for="name" class="form-label small fw-semibold">Product Name *</label>
+                    <input type="text" id="name" th:field="*{name}" class="form-control" placeholder="e.g. Aashirvaad Superior Sharbati Atta" required>
+                    <div class="text-danger extra-small mt-1" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                    <label for="brand" class="form-label small fw-semibold">Brand *</label>
+                    <input type="text" id="brand" th:field="*{brand}" class="form-control" placeholder="e.g. Aashirvaad" required>
+                    <div class="text-danger extra-small mt-1" th:if="${#fields.hasErrors('brand')}" th:errors="*{brand}"></div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="categoryId" class="form-label small fw-semibold">Supermarket Category *</label>
+                    <select id="categoryId" th:field="*{categoryId}" class="form-select" required>
+                        <option value="">Select Category</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">Category</option>
+                    </select>
+                    <div class="text-danger extra-small mt-1" th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}"></div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label for="subcategory" class="form-label small fw-semibold">Subcategory</label>
+                    <input type="text" id="subcategory" th:field="*{subcategory}" class="form-control" placeholder="e.g. Flours & Grains">
+                </div>
+
+                <div class="col-12">
+                    <label for="description" class="form-label small fw-semibold">Description</label>
+                    <textarea id="description" th:field="*{description}" rows="3" class="form-control" placeholder="Comprehensive product description, aroma, taste, source..."></textarea>
+                </div>
+            </div>
+
+            <!-- Pricing & Inventory Row -->
+            <div class="p-3 bg-light rounded-3 border mb-3">
+                <h6 class="fw-bold text-primary mb-3">Pricing, Package Size & Stock</h6>
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <label for="packageSize" class="form-label extra-small fw-semibold">Package Size *</label>
+                        <input type="text" id="packageSize" th:field="*{packageSize}" class="form-control form-control-sm" placeholder="e.g. 5 kg / 1 litre" required>
+                        <div class="text-danger extra-small mt-1" th:if="${#fields.hasErrors('packageSize')}" th:errors="*{packageSize}"></div>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                        <label for="unit" class="form-label extra-small fw-semibold">Unit *</label>
+                        <input type="text" id="unit" th:field="*{unit}" class="form-control form-control-sm" placeholder="e.g. kg, litre, pack" required>
+                        <div class="text-danger extra-small mt-1" th:if="${#fields.hasErrors('unit')}" th:errors="*{unit}"></div>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                        <label for="price" class="form-label extra-small fw-semibold">Selling Price (&#8377;) *</label>
+                        <input type="number" step="0.50" id="price" th:field="*{price}" class="form-control form-control-sm" placeholder="285.00" required>
+                        <div class="text-danger extra-small mt-1" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                    </div>
+
+                    <div class="col-6 col-md-3">
+                        <label for="originalPrice" class="form-label extra-small fw-semibold">Original Price (&#8377;)</label>
+                        <input type="number" step="0.50" id="originalPrice" th:field="*{originalPrice}" class="form-control form-control-sm" placeholder="325.00">
+                    </div>
+
+                    <div class="col-6 col-md-4">
+                        <label for="stockQuantity" class="form-label extra-small fw-semibold">Stock Quantity *</label>
+                        <input type="number" id="stockQuantity" th:field="*{stockQuantity}" class="form-control form-control-sm" min="0" required>
+                        <div class="text-danger extra-small mt-1" th:if="${#fields.hasErrors('stockQuantity')}" th:errors="*{stockQuantity}"></div>
+                    </div>
+
+                    <div class="col-12 col-md-8">
+                        <label for="imageUrl" class="form-label extra-small fw-semibold">Image URL</label>
+                        <input type="text" id="imageUrl" th:field="*{imageUrl}" class="form-control form-control-sm" placeholder="Leave blank to use default placeholder asset">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dietary & Storage Specifications -->
+            <div class="p-3 bg-light rounded-3 border mb-4">
+                <h6 class="fw-bold text-primary mb-3">Specifications & Handling</h6>
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <label for="ingredients" class="form-label extra-small fw-semibold">Ingredients</label>
+                        <input type="text" id="ingredients" th:field="*{ingredients}" class="form-control form-control-sm" placeholder="100% Whole Wheat">
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label for="nutritionalInfo" class="form-label extra-small fw-semibold">Nutritional Highlights</label>
+                        <input type="text" id="nutritionalInfo" th:field="*{nutritionalInfo}" class="form-control form-control-sm" placeholder="Rich in fiber & minerals">
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label for="storageInstructions" class="form-label extra-small fw-semibold">Storage Instructions</label>
+                        <input type="text" id="storageInstructions" th:field="*{storageInstructions}" class="form-control form-control-sm" placeholder="Store in dry airtight container">
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label for="shelfLife" class="form-label extra-small fw-semibold">Shelf Life</label>
+                        <input type="text" id="shelfLife" th:field="*{shelfLife}" class="form-control form-control-sm" placeholder="Best before 6 months from packaging">
+                    </div>
+
+                    <div class="col-12">
+                        <div class="d-flex flex-wrap gap-4 mt-2">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" th:field="*{vegetarian}" id="vegSwitch">
+                                <label class="form-check-label extra-small fw-semibold" for="vegSwitch">100% Vegetarian</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" th:field="*{perishable}" id="perishSwitch">
+                                <label class="form-check-label extra-small fw-semibold" for="perishSwitch">Perishable Fresh Produce</label>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" th:field="*{featured}" id="featSwitch">
+                                <label class="form-check-label extra-small fw-semibold" for="featSwitch">Feature on Homepage</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary px-4 fw-semibold">
+                    <i class="bi bi-cloud-arrow-up me-1"></i> Save Product
+                </button>
+                <a th:href="@{/seller/products}" class="btn btn-light border px-4">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

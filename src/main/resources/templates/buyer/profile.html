@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('My Profile')}"></head>
+<body>
+
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container-fluid px-3 px-lg-5 py-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-person-circle text-primary me-2"></i> Account Settings</h2>
+            <p class="text-muted small mb-0">Manage your profile details, delivery addresses, and security</p>
+        </div>
+        <a th:href="@{/orders}" class="btn btn-outline-primary btn-sm fw-semibold">View Order History</a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left: Profile Info & Change Password -->
+        <div class="col-12 col-lg-5">
+            <!-- Profile Info Card -->
+            <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius: 16px;">
+                <h5 class="fw-bold mb-3 pb-2 border-bottom"><i class="bi bi-person text-primary me-2"></i> Personal Details</h5>
+
+                <form th:action="@{/profile/update}" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Email Address</label>
+                        <input type="email" class="form-control form-control-sm bg-light" th:value="${user.email}" readonly>
+                        <div class="extra-small text-muted mt-1">Email cannot be modified once registered.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label small fw-semibold">Full Name *</label>
+                        <input type="text" id="name" name="name" class="form-control form-control-sm" th:value="${user.name}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone" class="form-label small fw-semibold">Contact Mobile Number *</label>
+                        <input type="tel" id="phone" name="phone" class="form-control form-control-sm" th:value="${user.phone}" maxlength="10" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-sm px-4 fw-semibold">Save Profile</button>
+                </form>
+            </div>
+
+            <!-- Password Update Card -->
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+                <h5 class="fw-bold mb-3 pb-2 border-bottom"><i class="bi bi-key text-warning me-2"></i> Change Password</h5>
+
+                <form th:action="@{/profile/password}" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Current Password</label>
+                        <input type="password" name="currentPassword" class="form-control form-control-sm" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">New Password</label>
+                        <input type="password" name="newPassword" class="form-control form-control-sm" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Confirm New Password</label>
+                        <input type="password" name="confirmPassword" class="form-control form-control-sm" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark btn-sm px-4 fw-semibold">Update Password</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right: Delivery Addresses Management -->
+        <div class="col-12 col-lg-7">
+            <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius: 16px;">
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                    <h5 class="fw-bold m-0"><i class="bi bi-geo-alt-fill text-danger me-2"></i> Saved Delivery Addresses</h5>
+                    <button type="button" class="btn btn-outline-primary btn-sm fw-semibold" data-bs-toggle="collapse" data-bs-target="#newAddressCollapse">
+                        <i class="bi bi-plus-lg me-1"></i> Add New Address
+                    </button>
+                </div>
+
+                <!-- Add New Address Form (Collapsible) -->
+                <div class="collapse mb-4" id="newAddressCollapse">
+                    <div class="p-3 bg-light rounded-3 border">
+                        <h6 class="fw-bold text-primary mb-3">Add Delivery Location</h6>
+                        <form th:action="@{/profile/address/add}" th:object="${newAddress}" method="POST">
+                            <div class="row g-2 mb-2">
+                                <div class="col-md-6">
+                                    <label class="form-label extra-small fw-semibold">Recipient Name *</label>
+                                    <input type="text" th:field="*{fullName}" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label extra-small fw-semibold">Contact Phone *</label>
+                                    <input type="tel" th:field="*{phone}" class="form-control form-control-sm" maxlength="10" required>
+                                </div>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label extra-small fw-semibold">Address Line 1 *</label>
+                                <input type="text" th:field="*{addressLine1}" class="form-control form-control-sm" placeholder="House/Flat No, Street, Landmark" required>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label extra-small fw-semibold">Address Line 2</label>
+                                <input type="text" th:field="*{addressLine2}" class="form-control form-control-sm" placeholder="Area, Colony">
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-md-4">
+                                    <label class="form-label extra-small fw-semibold">City *</label>
+                                    <input type="text" th:field="*{city}" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label extra-small fw-semibold">State *</label>
+                                    <input type="text" th:field="*{state}" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label extra-small fw-semibold">Pincode *</label>
+                                    <input type="text" th:field="*{pincode}" class="form-control form-control-sm" maxlength="6" required>
+                                </div>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" th:field="*{default}" id="defaultCheck">
+                                <label class="form-check-label extra-small fw-semibold" for="defaultCheck">
+                                    Set as default shipping address
+                                </label>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary btn-sm px-3 fw-semibold">Save Address</button>
+                                <button type="button" class="btn btn-light btn-sm px-3 border" data-bs-toggle="collapse" data-bs-target="#newAddressCollapse">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Existing Addresses List -->
+                <div class="d-flex flex-column gap-3" th:if="${addresses != null and !addresses.isEmpty()}">
+                    <div class="p-3 bg-light rounded-3 border d-flex flex-column flex-md-row justify-content-between align-items-start gap-2" th:each="addr : ${addresses}">
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <strong class="text-dark small" th:text="${addr.fullName}">Recipient Name</strong>
+                                <span th:if="${addr.default}" class="badge bg-success extra-small">Default</span>
+                            </div>
+                            <div class="text-muted extra-small" th:text="${addr.formattedAddress}">Formatted address</div>
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2 mt-2 mt-md-0">
+                            <form th:action="@{'/profile/address/default/' + ${addr.id}}" method="POST" th:if="${!addr.default}" class="m-0">
+                                <button type="submit" class="btn btn-outline-secondary btn-sm extra-small py-1">Set Default</button>
+                            </form>
+                            <form th:action="@{'/profile/address/delete/' + ${addr.id}}" method="POST" class="m-0"
+                                  onsubmit="return confirm('Remove this address?');">
+                                <button type="submit" class="btn btn-outline-danger btn-sm extra-small py-1"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center py-4 text-muted small" th:unless="${addresses != null and !addresses.isEmpty()}">
+                    <i class="bi bi-geo-alt fs-2 text-secondary mb-2 d-block"></i>
+                    No delivery addresses saved yet. Click "Add New Address" above to add one.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

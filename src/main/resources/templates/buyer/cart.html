@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Shopping Basket')}"></head>
+<body>
+
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container-fluid px-3 px-lg-5 py-4">
+    <h2 class="fw-bold mb-4"><i class="bi bi-basket2 text-primary me-2"></i> Shopping Basket</h2>
+
+    <div class="row g-4" th:if="${cart.items != null and !cart.items.isEmpty()}">
+        <!-- Left: Cart Items List -->
+        <div class="col-12 col-lg-8">
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+                <div class="d-flex align-items-center justify-content-between pb-3 border-bottom mb-3">
+                    <span class="fw-semibold text-muted" th:text="${cart.totalItemCount} + ' Items in Basket'">0 Items</span>
+                    <form th:action="@{/cart/clear}" method="POST" class="m-0">
+                        <button type="submit" class="btn btn-link text-danger text-decoration-none p-0 extra-small" onclick="return confirm('Clear all items from your basket?')">
+                            <i class="bi bi-trash3 me-1"></i> Clear Basket
+                        </button>
+                    </form>
+                </div>
+
+                <div class="d-flex flex-column gap-3">
+                    <div class="p-3 bg-light rounded-3 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 border"
+                         th:each="item : ${cart.items}">
+                        <!-- Item Image & Info -->
+                        <div class="d-flex align-items-center gap-3">
+                            <img th:src="${item.product.imageUrl != null and !item.product.imageUrl.isEmpty() ? item.product.imageUrl : '/images/placeholder-product.svg'}"
+                                 onerror="this.src='/images/placeholder-product.svg'"
+                                 style="width: 70px; height: 70px; object-fit: contain; border-radius: 8px; background: #fff;"
+                                 th:alt="${item.product.name}">
+                            <div>
+                                <h6 class="fw-bold mb-1">
+                                    <a th:href="@{'/product/' + ${item.product.id}}" class="text-dark text-decoration-none" th:text="${item.product.name}">Product Name</a>
+                                </h6>
+                                <div class="text-muted extra-small">
+                                    <span th:text="${item.product.packageSize}">1 kg</span> &bull;
+                                    <span class="font-monospace text-dark fw-semibold" th:text="'&#8377;' + ${item.unitPrice}">&#8377;285</span> each
+                                </div>
+                                <div th:if="${item.product.stockQuantity < 5}" class="text-warning extra-small mt-1">
+                                    <i class="bi bi-exclamation-circle me-1"></i> Only <span th:text="${item.product.stockQuantity}"></span> left in stock
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quantity Controls & Subtotal -->
+                        <div class="d-flex align-items-center justify-content-between justify-content-md-end gap-4">
+                            <!-- Update Quantity Form -->
+                            <form th:action="@{/cart/update}" method="POST" class="d-flex align-items-center gap-1 m-0">
+                                <input type="hidden" name="productId" th:value="${item.product.id}">
+                                <div class="input-group input-group-sm" style="width: 110px;">
+                                    <button type="submit" name="quantity" th:value="${item.quantity - 1}" class="btn btn-outline-secondary px-2" title="Decrease Quantity">-</button>
+                                    <input type="text" class="form-control text-center fw-bold bg-white" th:value="${item.quantity}" readonly>
+                                    <button type="submit" name="quantity" th:value="${item.quantity + 1}" class="btn btn-outline-secondary px-2" title="Increase Quantity"
+                                            th:disabled="${item.quantity >= item.product.stockQuantity}">+</button>
+                                </div>
+                            </form>
+
+                            <!-- Item Subtotal -->
+                            <div class="text-end" style="min-width: 90px;">
+                                <span class="fs-6 fw-bold text-dark font-monospace" th:text="'&#8377;' + ${item.itemTotal}">&#8377;570</span>
+                            </div>
+
+                            <!-- Remove Button -->
+                            <form th:action="@{'/cart/remove/' + ${item.product.id}}" method="POST" class="m-0">
+                                <button type="submit" class="btn btn-outline-danger btn-sm p-1 rounded-circle" title="Remove Item" style="width: 32px; height: 32px;">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Order Summary & Coupon Card -->
+        <div class="col-12 col-lg-4">
+            <!-- Voucher / Coupon Card -->
+            <div class="card border-0 shadow-sm p-4 mb-3" style="border-radius: 16px;">
+                <h6 class="fw-bold mb-3"><i class="bi bi-ticket-perforated text-warning me-2"></i> Promotional Coupons</h6>
+
+                <form th:action="@{/cart/apply-coupon}" method="POST" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="couponCode" class="form-control text-uppercase" placeholder="Enter coupon code" th:value="${appliedCouponCode}" required>
+                        <button type="submit" class="btn btn-dark fw-semibold px-3">Apply</button>
+                    </div>
+                </form>
+
+                <div th:if="${appliedCouponCode != null}" class="d-flex align-items-center justify-content-between p-2 bg-success bg-opacity-10 rounded border border-success border-opacity-25 mb-3">
+                    <span class="small text-success fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Coupon <span th:text="${appliedCouponCode}">CODE</span> Applied!</span>
+                    <form th:action="@{/cart/remove-coupon}" method="POST" class="m-0">
+                        <button type="submit" class="btn btn-link text-danger text-decoration-none p-0 extra-small">Remove</button>
+                    </form>
+                </div>
+
+                <!-- Available Coupons list -->
+                <div class="extra-small text-muted mb-1">Available Vouchers:</div>
+                <div class="d-flex flex-wrap gap-1">
+                    <span th:each="c : ${activeCoupons}" class="badge bg-light text-dark border p-1"
+                          th:text="${c.code} + ' (' + (c.discountPercent > 0 ? c.discountPercent + '% off' : '&#8377;' + c.flatDiscount + ' off') + ')'">WELCOME50</span>
+                </div>
+            </div>
+
+            <!-- Bill Breakdown Card -->
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+                <h5 class="fw-bold mb-3 pb-2 border-bottom">Order Summary</h5>
+
+                <div class="d-flex justify-content-between mb-2 small">
+                    <span class="text-muted">Basket Subtotal</span>
+                    <span class="fw-semibold font-monospace" th:text="'&#8377;' + ${subtotal}">&#8377;0</span>
+                </div>
+
+                <div class="d-flex justify-content-between mb-2 small" th:if="${discount > 0}">
+                    <span class="text-success fw-semibold">Coupon Discount</span>
+                    <span class="text-success fw-semibold font-monospace" th:text="'-&#8377;' + ${discount}">-&#8377;0</span>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3 small">
+                    <span class="text-muted">Delivery Charges</span>
+                    <span th:if="${deliveryFee == 0}" class="text-success fw-bold">FREE</span>
+                    <span th:unless="${deliveryFee == 0}" class="fw-semibold font-monospace" th:text="'&#8377;' + ${deliveryFee}">&#8377;40</span>
+                </div>
+
+                <div th:if="${subtotal < 499}" class="alert alert-warning py-2 px-3 extra-small mb-3">
+                    <i class="bi bi-info-circle me-1"></i> Add &#8377;<strong th:text="${499 - subtotal}"></strong> more for <strong>FREE Delivery</strong>!
+                </div>
+
+                <div class="d-flex justify-content-between pt-3 border-top mb-4">
+                    <span class="fs-5 fw-bold text-dark">Final Payable</span>
+                    <span class="fs-4 fw-bold text-primary font-monospace" th:text="'&#8377;' + ${finalTotal}">&#8377;0</span>
+                </div>
+
+                <a th:href="@{/checkout}" class="btn btn-primary w-100 py-3 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px;">
+                    Proceed to Checkout <i class="bi bi-arrow-right"></i>
+                </a>
+
+                <div class="text-center mt-3">
+                    <a th:href="@{/catalog}" class="small text-muted text-decoration-none">
+                        <i class="bi bi-arrow-left me-1"></i> Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty Basket State -->
+    <div class="card border-0 shadow-sm p-5 text-center my-4" style="border-radius: 20px;" th:unless="${cart.items != null and !cart.items.isEmpty()}">
+        <div class="p-4 bg-light rounded-circle d-inline-flex mx-auto mb-3 text-secondary">
+            <i class="bi bi-basket3 fs-1"></i>
+        </div>
+        <h3 class="fw-bold mb-2">Your Shopping Basket is Empty</h3>
+        <p class="text-muted small max-w-500 mx-auto mb-4">
+            Explore our fresh groceries, snacks, household staples, and dairy products to add everyday essentials.
+        </p>
+        <div>
+            <a th:href="@{/catalog}" class="btn btn-primary px-4 py-2 fw-semibold" style="border-radius: 10px;">
+                Explore Supermarket Catalogue
+            </a>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

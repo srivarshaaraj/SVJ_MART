@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Smart Shopping for Every Home')}"></head>
+<body>
+
+<!-- Header Navigation -->
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<!-- C. Hero Banner -->
+<section class="hero-banner">
+    <div class="container-fluid px-3 px-lg-5">
+        <div class="row align-items-center g-4">
+            <div class="col-12 col-lg-7">
+                <div class="hero-badge">
+                    <i class="bi bi-patch-check-fill"></i> SMARTER SHOPPING &bull; EVERYDAY ESSENTIALS
+                </div>
+                <h1 class="hero-title">
+                    Everything Your <span class="highlight">Home Needs</span>.
+                </h1>
+                <p class="hero-subtitle">
+                    From daily groceries and favourite snacks to cooking ingredients and household supplies, discover convenient, reliable shopping for every day.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a th:href="@{/catalog}" class="btn btn-primary px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm" style="border-radius: 10px; background-color: var(--electric-blue);">
+                        <i class="bi bi-cart3"></i> Shop Now
+                    </a>
+                    <a href="#categoriesSection" class="btn btn-outline-light px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" style="border-radius: 10px;">
+                        <i class="bi bi-grid-3x3-gap"></i> Explore Categories
+                    </a>
+                    <button type="button" class="btn btn-info text-dark px-3 py-2 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm" style="border-radius: 10px; background-color: var(--cyan-highlight);" data-bs-toggle="modal" data-bs-target="#aiAssistantModal">
+                        <i class="bi bi-stars"></i> Ask AI Assistant
+                    </button>
+                </div>
+
+                <!-- Trust Metrics Strip -->
+                <div class="d-flex flex-wrap gap-4 mt-4 pt-3 border-top border-white border-opacity-10 text-white-50 small">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-box-seam-fill text-info fs-5"></i>
+                        <span><strong>100+</strong> Supermarket Products</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-shield-lock-fill text-success fs-5"></i>
+                        <span><strong>100% Secure</strong> Checkout</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-truck text-warning fs-5"></i>
+                        <span><strong>Express</strong> Home Delivery</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero Visual Card -->
+            <div class="col-12 col-lg-5">
+                <div class="hero-card-preview text-center">
+                    <div class="d-flex align-items-center justify-content-between mb-3 text-start">
+                        <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 py-2 px-3">
+                            <i class="bi bi-check-circle-fill me-1"></i> Fresh Farm Stock
+                        </span>
+                        <span class="text-white-50 extra-small">Indiranagar Hub #01</span>
+                    </div>
+                    <img th:src="@{/images/placeholder-product.svg}" alt="SVJ MART Fresh Basket" class="img-fluid rounded-3 mb-3" style="max-height: 220px; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">
+                    <h5 class="text-white mb-1">Authentic Quality for Every Kitchen</h5>
+                    <p class="text-white-50 small mb-0">From MP Sharbati Atta & Aged Basmati to pure dairy & farm-fresh greens.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- D. Shop by Category -->
+<section id="categoriesSection" class="py-5">
+    <div class="container-fluid px-3 px-lg-5">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h2 class="mb-1">Shop by Category</h2>
+                <p class="text-muted small mb-0">Explore 16 dedicated aisles stocked with trusted household brands</p>
+            </div>
+            <a th:href="@{/catalog}" class="btn btn-outline-primary btn-sm fw-semibold">Browse All &rarr;</a>
+        </div>
+
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3">
+            <div class="col" th:each="cat : ${categories}">
+                <a th:href="@{'/catalog/' + ${cat.slug}}" class="category-card">
+                    <div class="category-icon-box">
+                        <i class="bi" th:classappend="${cat.icon != null ? cat.icon : 'bi-bag'}"></i>
+                    </div>
+                    <div class="category-card-name" th:text="${cat.name}">Category Name</div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- J. AI Recommended For You (AI Capstone Highlight) -->
+<section class="py-5 bg-white border-top border-bottom" th:if="${aiRecommendations != null and !aiRecommendations.isEmpty()}">
+    <div class="container-fluid px-3 px-lg-5">
+        <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-2">
+            <div>
+                <div class="d-inline-flex align-items-center gap-1 text-primary fw-bold extra-small text-uppercase mb-1" style="letter-spacing: 0.06em;">
+                    <i class="bi bi-stars text-info"></i> AI Hybrid Recommendation Engine
+                </div>
+                <h2 class="mb-1">Recommended for You</h2>
+                <p class="text-muted small mb-0">Personalized based on dietary affinity, popular baskets, and pantry staples</p>
+            </div>
+            <button type="button" class="btn btn-outline-info btn-sm text-dark fw-semibold" data-bs-toggle="modal" data-bs-target="#aiAssistantModal">
+                <i class="bi bi-chat-dots me-1"></i> Customize with AI
+            </button>
+        </div>
+
+        <div class="row g-3">
+            <th:block th:each="product : ${aiRecommendations}">
+                <div th:replace="~{fragments/product-card :: card(${product})}"></div>
+            </th:block>
+        </div>
+    </div>
+</section>
+
+<!-- E. Daily Essentials -->
+<section class="py-5">
+    <div class="container-fluid px-3 px-lg-5">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h2 class="mb-1">Daily Essentials</h2>
+                <p class="text-muted small mb-0">Top-rated staples and morning essentials frequently ordered together</p>
+            </div>
+            <a th:href="@{/catalog}" class="btn btn-outline-primary btn-sm fw-semibold">View More &rarr;</a>
+        </div>
+
+        <div class="row g-3">
+            <th:block th:each="product : ${dailyEssentials}">
+                <div th:replace="~{fragments/product-card :: card(${product})}"></div>
+            </th:block>
+        </div>
+    </div>
+</section>
+
+<!-- F. Snacks and Beverages -->
+<section class="py-5 bg-white border-top border-bottom" th:if="${snacksAndBeverages != null and !snacksAndBeverages.isEmpty()}">
+    <div class="container-fluid px-3 px-lg-5">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h2 class="mb-1">Snacks & Beverages</h2>
+                <p class="text-muted small mb-0">Crispy namkeen, buttery cookies, chocolates, roasted filter coffee, and refreshing juices</p>
+            </div>
+            <a th:href="@{/catalog/snacks-munchies}" class="btn btn-outline-primary btn-sm fw-semibold">Snack Bar &rarr;</a>
+        </div>
+
+        <div class="row g-3">
+            <th:block th:each="product : ${snacksAndBeverages}">
+                <div th:replace="~{fragments/product-card :: card(${product})}"></div>
+            </th:block>
+        </div>
+    </div>
+</section>
+
+<!-- G. Fresh Picks (Perishables: Produce & Dairy) -->
+<section class="py-5" th:if="${freshPicks != null and !freshPicks.isEmpty()}">
+    <div class="container-fluid px-3 px-lg-5">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <span class="badge bg-success bg-opacity-10 text-success fw-bold mb-1">
+                    <i class="bi bi-snow me-1"></i> Cold Chain Fulfilled
+                </span>
+                <h2 class="mb-1">Fresh Farm Picks & Dairy</h2>
+                <p class="text-muted small mb-0">Fresh milk, creamy paneer, set curd, and handpicked crisp seasonal vegetables</p>
+            </div>
+            <a th:href="@{/catalog/fresh-fruits-vegetables}" class="btn btn-outline-success btn-sm fw-semibold">Farm Fresh &rarr;</a>
+        </div>
+
+        <div class="row g-3">
+            <th:block th:each="product : ${freshPicks}">
+                <div th:replace="~{fragments/product-card :: card(${product})}"></div>
+            </th:block>
+        </div>
+    </div>
+</section>
+
+<!-- H. Cooking Corner -->
+<section class="py-5 bg-white border-top border-bottom" th:if="${cookingCorner != null and !cookingCorner.isEmpty()}">
+    <div class="container-fluid px-3 px-lg-5">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h2 class="mb-1">The Cooking Corner</h2>
+                <p class="text-muted small mb-0">Premium flours, pure cow ghee, refined oils, and aromatic regional masalas</p>
+            </div>
+            <a th:href="@{/catalog/rice-grains-staples}" class="btn btn-outline-primary btn-sm fw-semibold">Pantry Essentials &rarr;</a>
+        </div>
+
+        <div class="row g-3">
+            <th:block th:each="product : ${cookingCorner}">
+                <div th:replace="~{fragments/product-card :: card(${product})}"></div>
+            </th:block>
+        </div>
+    </div>
+</section>
+
+<!-- I. Household & Cleaning Essentials -->
+<section class="py-5" th:if="${householdEssentials != null and !householdEssentials.isEmpty()}">
+    <div class="container-fluid px-3 px-lg-5">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h2 class="mb-1">Household & Cleaning Care</h2>
+                <p class="text-muted small mb-0">Laundry liquids, floor disinfectants, grease-fighting dishwash gels, and utility essentials</p>
+            </div>
+            <a th:href="@{/catalog/cleaning-products}" class="btn btn-outline-primary btn-sm fw-semibold">Clean Home &rarr;</a>
+        </div>
+
+        <div class="row g-3">
+            <th:block th:each="product : ${householdEssentials}">
+                <div th:replace="~{fragments/product-card :: card(${product})}"></div>
+            </th:block>
+        </div>
+    </div>
+</section>
+
+<!-- K. Bestselling Products -->
+<section class="py-5 bg-white border-top border-bottom" th:if="${bestsellers != null and !bestsellers.isEmpty()}">
+    <div class="container-fluid px-3 px-lg-5">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <span class="badge bg-warning bg-opacity-25 text-dark fw-bold mb-1">
+                    <i class="bi bi-fire me-1"></i> Most Loved
+                </span>
+                <h2 class="mb-1">Bestselling Products</h2>
+                <p class="text-muted small mb-0">Demonstration catalogue bestsellers verified across customer transactions</p>
+            </div>
+            <a th:href="@{/catalog?sort=popular}" class="btn btn-outline-primary btn-sm fw-semibold">View All &rarr;</a>
+        </div>
+
+        <div class="row g-3">
+            <th:block th:each="product : ${bestsellers}">
+                <div th:replace="~{fragments/product-card :: card(${product})}"></div>
+            </th:block>
+        </div>
+    </div>
+</section>
+
+<!-- L. Why Choose SVJ MART? -->
+<section class="py-5">
+    <div class="container-fluid px-3 px-lg-5">
+        <div class="text-center max-w-700 mx-auto mb-5">
+            <h2 class="mb-2">Why Choose SVJ MART?</h2>
+            <p class="text-muted small">Designed for reliable supermarket shopping with transparent pricing and smart tools</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12 col-md-4">
+                <div class="p-4 bg-white rounded-3 border h-100 shadow-sm text-center">
+                    <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-circle d-inline-flex mb-3">
+                        <i class="bi bi-cart-check fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Convenient Smart Shopping</h5>
+                    <p class="text-muted small mb-0">Browse over 100+ categories from home with real-time inventory and instant search.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="p-4 bg-white rounded-3 border h-100 shadow-sm text-center">
+                    <div class="p-3 bg-success bg-opacity-10 text-success rounded-circle d-inline-flex mb-3">
+                        <i class="bi bi-tag fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Transparent Pricing & Savings</h5>
+                    <p class="text-muted small mb-0">Clear prices in Indian Rupees (&#8377;), real discounts, and verified package sizes.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="p-4 bg-white rounded-3 border h-100 shadow-sm text-center">
+                    <div class="p-3 bg-info bg-opacity-10 text-info rounded-circle d-inline-flex mb-3">
+                        <i class="bi bi-cpu fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">AI-Powered Grocery Assistant</h5>
+                    <p class="text-muted small mb-0">Intelligent meal-prep baskets, recipe ingredient resolvers, and knapsack budget planning.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="p-4 bg-white rounded-3 border h-100 shadow-sm text-center">
+                    <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-circle d-inline-flex mb-3">
+                        <i class="bi bi-truck fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Real-Time Order Tracking</h5>
+                    <p class="text-muted small mb-0">Visual timeline from confirmation, packing, dispatch to successful delivery at your door.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="p-4 bg-white rounded-3 border h-100 shadow-sm text-center">
+                    <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-circle d-inline-flex mb-3">
+                        <i class="bi bi-shield-check fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Secure Multi-Role Access</h5>
+                    <p class="text-muted small mb-0">Role-based controls for Buyers, approved Sellers, and Administrators with BCrypt security.</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="p-4 bg-white rounded-3 border h-100 shadow-sm text-center">
+                    <div class="p-3 bg-secondary bg-opacity-10 text-secondary rounded-circle d-inline-flex mb-3">
+                        <i class="bi bi-headset fs-2"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Academic Capstone Excellence</h5>
+                    <p class="text-muted small mb-0">Engineered with Spring Boot 3, Java 21, JPA/Hibernate, and responsive HTML5/CSS3 architecture.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- M. Customer Reviews -->
+<section class="py-5 bg-white border-top border-bottom" th:if="${demoReviews != null and !demoReviews.isEmpty()}">
+    <div class="container-fluid px-3 px-lg-5">
+        <div class="text-center max-w-700 mx-auto mb-4">
+            <span class="badge bg-secondary bg-opacity-25 text-dark extra-small mb-1">Demonstration Reviews</span>
+            <h2 class="mb-1">Customer Reviews</h2>
+            <p class="text-muted small">Real feedback and ratings submitted by shoppers</p>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-12 col-md-6 col-lg-4" th:each="rev : ${demoReviews}">
+                <div class="p-3 rounded-3 border bg-light h-100 shadow-sm">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="text-warning">
+                            <i class="bi bi-star-fill" th:each="i : ${#numbers.sequence(1, rev.rating)}"></i>
+                        </div>
+                        <span class="badge bg-success bg-opacity-10 text-success small">Verified Purchase</span>
+                    </div>
+                    <h6 class="fw-bold mb-1" th:text="${rev.headline}">Headline</h6>
+                    <p class="small text-muted mb-2" th:text="${rev.comment}">Review comment</p>
+                    <div class="d-flex align-items-center justify-content-between border-top pt-2 extra-small text-secondary">
+                        <span class="fw-semibold" th:text="${rev.user != null ? rev.user.name : 'Customer'}">Shopper</span>
+                        <span th:text="${rev.product != null ? rev.product.name : ''}">Product</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

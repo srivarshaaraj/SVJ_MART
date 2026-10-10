@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account &bull; SVJ MART</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            background: linear-gradient(180deg, #6078EA 0%, #4D5CD4 40%, #5C3FB2 100%);
+            color: #172033;
+        }
+
+        .top-nav {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .register-card {
+            width: 100%;
+            max-width: 500px;
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 36px 32px 32px;
+            box-shadow: 0 25px 60px rgba(18, 24, 76, 0.32);
+        }
+
+        .brand-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .brand-logo-wrap {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .brand-title {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: #3B5CE8;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-subtitle {
+            font-size: 0.92rem;
+            color: #64748B;
+            line-height: 1.45;
+        }
+
+        .role-switch {
+            display: flex;
+            background: #F1F5F9;
+            padding: 4px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            gap: 4px;
+        }
+
+        .role-switch-btn {
+            flex: 1;
+            text-align: center;
+            padding: 10px 8px;
+            border-radius: 11px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #64748B;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .role-switch-btn.active {
+            background: #ffffff;
+            color: #3B5CE8;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #1E293B;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 46px;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 0 14px;
+            font-size: 0.92rem;
+            color: #1E293B;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            border-color: #3B5CE8;
+            box-shadow: 0 0 0 3px rgba(59, 92, 232, 0.15);
+        }
+
+        .form-textarea {
+            width: 100%;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 0.92rem;
+            color: #1E293B;
+            outline: none;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .form-textarea:focus {
+            border-color: #3B5CE8;
+            box-shadow: 0 0 0 3px rgba(59, 92, 232, 0.15);
+        }
+
+        .seller-section {
+            background: #F8FAFC;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .seller-badge {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #0284C7;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #5B72EA 0%, #4D5CD4 100%);
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 22px rgba(91, 114, 234, 0.38);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            margin-top: 6px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 26px rgba(91, 114, 234, 0.45);
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.92rem;
+            color: #64748B;
+        }
+
+        .footer-link {
+            color: #3B5CE8;
+            font-weight: 700;
+            text-decoration: none;
+            margin-left: 4px;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        .field-error {
+            color: #DC2626;
+            font-size: 0.78rem;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 480px) {
+            .register-card {
+                padding: 28px 20px 24px;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <a th:href="@{/login}" class="back-link">
+            <i class="bi bi-arrow-left"></i> Back to Login
+        </a>
+        <a th:href="@{/}" class="back-link">
+            Storefront
+        </a>
+    </div>
+
+    <div class="register-card">
+        <div class="brand-header">
+            <div class="brand-logo-wrap">
+                <svg width="32" height="32" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="29" r="2.5" fill="#EF4444"/>
+                    <circle cx="25" cy="29" r="2.5" fill="#EF4444"/>
+                    <path d="M4 6H7.5L11 22H27L30 11H8.5" stroke="#3B5CE8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 11H29" stroke="#60A5FA" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M11 16H28" stroke="#60A5FA" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span class="brand-title">SVJ Mart</span>
+            </div>
+            <p class="brand-subtitle">
+                Create an account to start your smart shopping journey.
+            </p>
+        </div>
+
+        <!-- Role Switcher -->
+        <div class="role-switch">
+            <a th:href="@{/register(role='BUYER')}"
+               class="role-switch-btn"
+               th:classappend="${registerDto.role == 'BUYER' ? 'active' : ''}">
+                <i class="bi bi-person-fill"></i> Buyer Account
+            </a>
+            <a th:href="@{/register(role='SELLER')}"
+               class="role-switch-btn"
+               th:classappend="${registerDto.role == 'SELLER' ? 'active' : ''}">
+                <i class="bi bi-shop"></i> Seller Account
+            </a>
+        </div>
+
+        <!-- Registration Form -->
+        <form th:action="@{/register}" th:object="${registerDto}" method="POST">
+            <input type="hidden" th:field="*{role}">
+
+            <div class="form-group">
+                <label for="name" class="form-label">Full Name *</label>
+                <input type="text" id="name" th:field="*{name}" class="form-input" placeholder="e.g. Rajesh Kumar" required autofocus>
+                <div class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address *</label>
+                    <input type="email" id="email" th:field="*{email}" class="form-input" placeholder="name@example.com" required>
+                    <div class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+                <div class="form-group">
+                    <label for="phone" class="form-label">Phone Number *</label>
+                    <input type="tel" id="phone" th:field="*{phone}" class="form-input" placeholder="9876543210" maxlength="10" required>
+                    <div class="field-error" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                </div>
+            </div>
+
+            <!-- Seller Specific Fields -->
+            <div th:if="${registerDto.role == 'SELLER'}" class="seller-section">
+                <div class="seller-badge">
+                    <i class="bi bi-info-circle-fill"></i> Store &amp; Supermarket Details
+                </div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label for="storeName" class="form-label" style="font-size: 0.82rem;">Store Name *</label>
+                    <input type="text" id="storeName" th:field="*{storeName}" class="form-input" style="height: 40px;" placeholder="e.g. Green Valley Fresh Market">
+                </div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label for="gstin" class="form-label" style="font-size: 0.82rem;">GSTIN (Optional)</label>
+                    <input type="text" id="gstin" th:field="*{gstin}" class="form-input" style="height: 40px;" placeholder="22AAAAA0000A1Z5">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="businessDescription" class="form-label" style="font-size: 0.82rem;">Description</label>
+                    <textarea id="businessDescription" th:field="*{businessDescription}" class="form-textarea" rows="2" placeholder="Brief details about your grocery products..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="password" class="form-label">Password *</label>
+                    <input type="password" id="password" th:field="*{password}" class="form-input" placeholder="At least 6 chars" required>
+                    <div class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">Confirm *</label>
+                    <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="form-input" placeholder="Re-enter password" required>
+                    <div class="field-error" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Create Account
+            </button>
+        </form>
+
+        <div class="footer-text">
+            <span>Already have an account?</span>
+            <a th:href="@{/login}" class="footer-link">Sign In</a>
+        </div>
+    </div>
+
+</body>
+</html>

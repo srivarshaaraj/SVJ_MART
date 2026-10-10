@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Checkout')}"></head>
+<body>
+
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container-fluid px-3 px-lg-5 py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/cart}" class="text-decoration-none">Basket</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+        </ol>
+    </nav>
+
+    <h2 class="fw-bold mb-4"><i class="bi bi-shield-check text-success me-2"></i> Secure Checkout</h2>
+
+    <!-- Checkout Form -->
+    <form th:action="@{/checkout/place-order}" th:object="${checkoutDto}" method="POST" id="checkoutForm">
+        <input type="hidden" th:field="*{couponCode}">
+
+        <div class="row g-4">
+            <!-- Left: Delivery Address & Payment Method -->
+            <div class="col-12 col-lg-8">
+                <!-- 1. Delivery Address Card -->
+                <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius: 16px;">
+                    <h5 class="fw-bold mb-3 pb-2 border-bottom">
+                        <i class="bi bi-geo-alt-fill text-danger me-2"></i> 1. Delivery Address
+                    </h5>
+
+                    <!-- Saved Addresses Options if available -->
+                    <div th:if="${addresses != null and !addresses.isEmpty()}" class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase text-secondary mb-2">Saved Addresses</label>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="form-check p-3 border rounded-3 bg-light" th:each="addr : ${addresses}">
+                                <input class="form-check-input" type="radio" name="selectedAddressId" th:value="${addr.id}"
+                                       th:id="'addr_' + ${addr.id}"
+                                       th:checked="${checkoutDto.selectedAddressId != null && checkoutDto.selectedAddressId == addr.id}"
+                                       th:data-name="${addr.fullName}"
+                                       th:data-phone="${addr.phone}"
+                                       th:data-line1="${addr.addressLine1}"
+                                       th:data-line2="${addr.addressLine2}"
+                                       th:data-city="${addr.city}"
+                                       th:data-state="${addr.state}"
+                                       th:data-pincode="${addr.pincode}"
+                                       th:data-landmark="${addr.landmark}"
+                                       onchange="populateAddressFields(this)">
+                                <label class="form-check-label w-100 cursor-pointer" th:for="'addr_' + ${addr.id}">
+                                    <div class="d-flex align-items-center justify-content-between mb-1">
+                                        <strong th:text="${addr.fullName}">Recipient Name</strong>
+                                        <span th:if="${addr.default}" class="badge bg-primary extra-small">Default</span>
+                                    </div>
+                                    <div class="small text-muted" th:text="${addr.formattedAddress}">Full address line</div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Address Input Fields -->
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label for="recipientName" class="form-label small fw-semibold">Recipient Full Name *</label>
+                            <input type="text" id="recipientName" th:field="*{recipientName}" class="form-control form-control-sm" required>
+                            <div class="text-danger extra-small mt-1" th:if="${#fields.hasErrors('recipientName')}" th:errors="*{recipientName}"></div>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="recipientPhone" class="form-label small fw-semibold">Contact Mobile Number *</label>
+                            <input type="tel" id="recipientPhone" th:field="*{recipientPhone}" class="form-control form-control-sm" placeholder="10-digit number" maxlength="10" required>
+                            <div class="text-danger extra-small mt-1" th:if="${#fields.hasErrors('recipientPhone')}" th:errors="*{recipientPhone}"></div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="addressLine1" class="form-label small fw-semibold">Flat / House No. / Building / Street *</label>
+                            <input type="text" id="addressLine1" th:field="*{addressLine1}" class="form-control form-control-sm" required>
+                            <div class="text-danger extra-small mt-1" th:if="${#fields.hasErrors('addressLine1')}" th:errors="*{addressLine1}"></div>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="addressLine2" class="form-label small fw-semibold">Area / Sector / Colony</label>
+                            <input type="text" id="addressLine2" th:field="*{addressLine2}" class="form-control form-control-sm">
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="landmark" class="form-label small fw-semibold">Landmark</label>
+                            <input type="text" id="landmark" th:field="*{landmark}" class="form-control form-control-sm" placeholder="e.g. Near Metro Station">
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <label for="city" class="form-label small fw-semibold">City *</label>
+                            <input type="text" id="city" th:field="*{city}" class="form-control form-control-sm" required>
+                            <div class="text-danger extra-small mt-1" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></div>
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <label for="state" class="form-label small fw-semibold">State *</label>
+                            <input type="text" id="state" th:field="*{state}" class="form-control form-control-sm" required>
+                            <div class="text-danger extra-small mt-1" th:if="${#fields.hasErrors('state')}" th:errors="*{state}"></div>
+                        </div>
+
+                        <div class="col-12 col-md-4">
+                            <label for="pincode" class="form-label small fw-semibold">Pincode *</label>
+                            <input type="text" id="pincode" th:field="*{pincode}" class="form-control form-control-sm" maxlength="6" required>
+                            <div class="text-danger extra-small mt-1" th:if="${#fields.hasErrors('pincode')}" th:errors="*{pincode}"></div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="deliveryInstructions" class="form-label small fw-semibold">Special Delivery Instructions</label>
+                            <input type="text" id="deliveryInstructions" th:field="*{deliveryInstructions}" class="form-control form-control-sm" placeholder="e.g. Please leave with security guard / Ring doorbell">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Payment Method Card -->
+                <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius: 16px;">
+                    <h5 class="fw-bold mb-3 pb-2 border-bottom">
+                        <i class="bi bi-credit-card-2-front-fill text-primary me-2"></i> 2. Payment Method
+                    </h5>
+
+                    <!-- Academic Simulation Banner -->
+                    <div class="alert alert-info py-2 px-3 small mb-4 border-info border-opacity-25 bg-info bg-opacity-10">
+                        <i class="bi bi-info-circle-fill me-1"></i>
+                        <strong>Capstone Academic Payment Simulation Mode:</strong> Transactions are simulated securely for project evaluation. Real money or financial OTPs are never collected.
+                    </div>
+
+                    <!-- Payment Options -->
+                    <div class="d-flex flex-column gap-3 mb-4">
+                        <!-- Option 1: Cash on Delivery -->
+                        <div class="form-check p-3 border rounded-3 bg-light">
+                            <input class="form-check-input" type="radio" th:field="*{paymentMethod}" value="CASH_ON_DELIVERY" id="payCod" checked onchange="togglePaymentPanels()">
+                            <label class="form-check-label w-100 fw-semibold" for="payCod">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span><i class="bi bi-cash-stack text-success me-2"></i> Cash on Delivery (COD)</span>
+                                    <span class="badge bg-secondary extra-small">Pay upon delivery</span>
+                                </div>
+                                <div class="extra-small text-muted fw-normal mt-1">Pay with cash or UPI to delivery agent upon order arrival.</div>
+                            </label>
+                        </div>
+
+                        <!-- Option 2: UPI Apps (GPay, PhonePe, Paytm) -->
+                        <div class="form-check p-3 border rounded-3 bg-light">
+                            <input class="form-check-input" type="radio" th:field="*{paymentMethod}" value="UPI_QR" id="payUpi" onchange="togglePaymentPanels()">
+                            <label class="form-check-label w-100 fw-semibold" for="payUpi">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span><i class="bi bi-qr-code-scan text-primary me-2"></i> Instant UPI (GPay / PhonePe / Paytm / QR)</span>
+                                    <span class="badge bg-primary extra-small">Instant Approval</span>
+                                </div>
+                                <div class="extra-small text-muted fw-normal mt-1">Scan simulated merchant QR code with any UPI app.</div>
+                            </label>
+
+                            <!-- UPI QR Simulation View -->
+                            <div id="upiPanel" class="mt-3 p-3 bg-white rounded border text-center d-none">
+                                <div class="p-2 border d-inline-block rounded bg-white shadow-sm mb-2">
+                                    <!-- Embedded Scalable SVG QR code representation -->
+                                    <svg width="130" height="130" viewBox="0 0 100 100" fill="#142B4A">
+                                        <rect width="100" height="100" fill="#FFFFFF"/>
+                                        <rect x="10" y="10" width="24" height="24" fill="#0B1220"/>
+                                        <rect x="14" y="14" width="16" height="16" fill="#FFFFFF"/>
+                                        <rect x="18" y="18" width="8" height="8" fill="#0B1220"/>
+                                        <rect x="66" y="10" width="24" height="24" fill="#0B1220"/>
+                                        <rect x="70" y="14" width="16" height="16" fill="#FFFFFF"/>
+                                        <rect x="74" y="18" width="8" height="8" fill="#0B1220"/>
+                                        <rect x="10" y="66" width="24" height="24" fill="#0B1220"/>
+                                        <rect x="14" y="70" width="16" height="16" fill="#FFFFFF"/>
+                                        <rect x="18" y="74" width="8" height="8" fill="#0B1220"/>
+                                        <rect x="42" y="10" width="16" height="8" fill="#287BFF"/>
+                                        <rect x="42" y="24" width="8" height="16" fill="#0B1220"/>
+                                        <rect x="54" y="24" width="6" height="16" fill="#16A34A"/>
+                                        <rect x="42" y="46" width="16" height="16" fill="#0B1220"/>
+                                        <rect x="10" y="42" width="24" height="8" fill="#287BFF"/>
+                                        <rect x="66" y="42" width="24" height="10" fill="#0B1220"/>
+                                        <rect x="42" y="70" width="24" height="20" fill="#287BFF"/>
+                                        <rect x="72" y="70" width="18" height="18" fill="#0B1220"/>
+                                    </svg>
+                                </div>
+                                <div class="fw-bold text-dark small">UPI ID: <span class="font-monospace text-primary">svjmart@icici</span></div>
+                                <div class="extra-small text-muted">Demonstration Sandbox QR &bull; Instant Verified Callback</div>
+                            </div>
+                        </div>
+
+                        <!-- Option 3: Simulated Card Sandbox -->
+                        <div class="form-check p-3 border rounded-3 bg-light">
+                            <input class="form-check-input" type="radio" th:field="*{paymentMethod}" value="SIMULATED_CARD" id="payCard" onchange="togglePaymentPanels()">
+                            <label class="form-check-label w-100 fw-semibold" for="payCard">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span><i class="bi bi-credit-card text-dark me-2"></i> Debit / Credit Card (Simulated Sandbox)</span>
+                                    <span class="badge bg-secondary extra-small">Visa / RuPay / Mastercard</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Option 4: Simulated NetBanking -->
+                        <div class="form-check p-3 border rounded-3 bg-light">
+                            <input class="form-check-input" type="radio" th:field="*{paymentMethod}" value="SIMULATED_NETBANKING" id="payNb" onchange="togglePaymentPanels()">
+                            <label class="form-check-label w-100 fw-semibold" for="payNb">
+                                <div><i class="bi bi-bank text-secondary me-2"></i> Net Banking (Simulated Gateway)</div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Academic Demonstration Test Outcome Controls -->
+                    <div class="p-3 bg-warning bg-opacity-10 rounded-3 border border-warning border-opacity-50">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <strong class="small text-dark"><i class="bi bi-sliders me-1"></i> Academic Test Outcome Selector:</strong>
+                                <div class="extra-small text-muted">Simulate whether payment gateway returns SUCCESS or FAILED.</div>
+                            </div>
+                            <div class="form-check form-switch m-0">
+                                <input class="form-check-input" type="checkbox" th:field="*{simulateSuccess}" id="simulateSuccessSwitch" checked>
+                                <label class="form-check-label small fw-bold text-success" for="simulateSuccessSwitch" id="simStatusLabel">
+                                    Success Outcome
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Order Summary Breakdown -->
+            <div class="col-12 col-lg-4">
+                <div class="card border-0 shadow-sm p-4 sticky-top" style="top: 90px; border-radius: 16px;">
+                    <h5 class="fw-bold mb-3 pb-2 border-bottom">Order Review</h5>
+
+                    <!-- Itemized Items List -->
+                    <div class="mb-3" style="max-height: 240px; overflow-y: auto;">
+                        <div class="d-flex align-items-center justify-content-between py-2 border-bottom" th:each="it : ${cart.items}">
+                            <div class="small pe-2">
+                                <span class="fw-semibold text-dark text-truncate d-block" style="max-width: 170px;" th:text="${it.product.name}">Product</span>
+                                <span class="text-muted extra-small" th:text="${it.quantity} + ' x &#8377;' + ${it.unitPrice}">1 x &#8377;100</span>
+                            </div>
+                            <span class="small fw-bold font-monospace text-dark" th:text="'&#8377;' + ${it.itemTotal}">&#8377;100</span>
+                        </div>
+                    </div>
+
+                    <!-- Bill Breakdown -->
+                    <div class="d-flex justify-content-between mb-2 small">
+                        <span class="text-muted">Items Subtotal</span>
+                        <span class="fw-semibold font-monospace" th:text="'&#8377;' + ${subtotal}">&#8377;0</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2 small" th:if="${discount > 0}">
+                        <span class="text-success fw-semibold">Coupon Discount</span>
+                        <span class="text-success fw-semibold font-monospace" th:text="'-&#8377;' + ${discount}">-&#8377;0</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3 small">
+                        <span class="text-muted">Delivery Charge</span>
+                        <span th:if="${deliveryFee == 0}" class="text-success fw-bold">FREE</span>
+                        <span th:unless="${deliveryFee == 0}" class="fw-semibold font-monospace" th:text="'&#8377;' + ${deliveryFee}">&#8377;40</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between pt-3 border-top mb-4">
+                        <span class="fs-5 fw-bold text-dark">Total Amount</span>
+                        <span class="fs-4 fw-bold text-primary font-monospace" th:text="'&#8377;' + ${finalTotal}">&#8377;0</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 py-3 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" style="border-radius: 12px; background-color: var(--fresh-green);">
+                        <i class="bi bi-lock-fill"></i> Place Order Now
+                    </button>
+
+                    <div class="text-center mt-3 extra-small text-muted">
+                        <i class="bi bi-shield-check text-success"></i> 256-Bit SSL Secured Transaction
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+function populateAddressFields(radio) {
+    document.getElementById('recipientName').value = radio.getAttribute('data-name') || '';
+    document.getElementById('recipientPhone').value = radio.getAttribute('data-phone') || '';
+    document.getElementById('addressLine1').value = radio.getAttribute('data-line1') || '';
+    document.getElementById('addressLine2').value = radio.getAttribute('data-line2') || '';
+    document.getElementById('city').value = radio.getAttribute('data-city') || '';
+    document.getElementById('state').value = radio.getAttribute('data-state') || '';
+    document.getElementById('pincode').value = radio.getAttribute('data-pincode') || '';
+    document.getElementById('landmark').value = radio.getAttribute('data-landmark') || '';
+}
+
+function togglePaymentPanels() {
+    const isUpi = document.getElementById('payUpi').checked;
+    const upiPanel = document.getElementById('upiPanel');
+    if (upiPanel) {
+        if (isUpi) upiPanel.classList.remove('d-none');
+        else upiPanel.classList.add('d-none');
+    }
+}
+
+const simSwitch = document.getElementById('simulateSuccessSwitch');
+if (simSwitch) {
+    simSwitch.addEventListener('change', function() {
+        const label = document.getElementById('simStatusLabel');
+        if (this.checked) {
+            label.innerText = 'Success Outcome';
+            label.className = 'form-check-label small fw-bold text-success';
+        } else {
+            label.innerText = 'Failure Outcome (Demo Fail)';
+            label.className = 'form-check-label small fw-bold text-danger';
+        }
+    });
+}
+</script>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

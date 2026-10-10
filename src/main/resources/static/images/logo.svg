@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 64" fill="none">
+  <defs>
+    <linearGradient id="svjGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#287BFF"/>
+      <stop offset="50%" stop-color="#22D3EE"/>
+      <stop offset="100%" stop-color="#16A34A"/>
+    </linearGradient>
+    <linearGradient id="basketGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#287BFF"/>
+      <stop offset="100%" stop-color="#142B4A"/>
+    </linearGradient>
+  </defs>
+  <!-- Shopping Basket Icon -->
+  <g transform="translate(6, 8)">
+    <rect x="2" y="16" width="44" height="28" rx="7" fill="url(#basketGrad)"/>
+    <path d="M10 16 L24 2 L38 16" stroke="#22D3EE" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="24" cy="2" r="3" fill="#16A34A"/>
+    <!-- Basket Weave lines -->
+    <path d="M12 24 L36 24 M10 32 L38 32" stroke="#FFFFFF" stroke-opacity="0.35" stroke-width="2" stroke-linecap="round"/>
+    <!-- Little Sparkle / Fresh leaf -->
+    <path d="M38 10 C38 10 44 8 46 14 C44 14 38 14 38 10 Z" fill="#16A34A"/>
+  </g>
+  <!-- Brand Typography -->
+  <text x="64" y="36" font-family="'Space Grotesk', 'Inter', system-ui, sans-serif" font-size="28" font-weight="900" fill="#FFFFFF" letter-spacing="1">SVJ</text>
+  <text x="126" y="36" font-family="'Space Grotesk', 'Inter', system-ui, sans-serif" font-size="28" font-weight="900" fill="url(#svjGrad)" letter-spacing="2">MART</text>
+  <text x="65" y="50" font-family="'Inter', system-ui, sans-serif" font-size="9" font-weight="600" fill="#22D3EE" letter-spacing="2.5">SMART SHOPPING</text>
+</svg>

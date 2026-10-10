@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('My Wishlist')}"></head>
+<body>
+
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container-fluid px-3 px-lg-5 py-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-heart text-danger me-2"></i> Saved Wishlist</h2>
+            <p class="text-muted small mb-0">Your favourite groceries and home essentials saved for quick access</p>
+        </div>
+        <a th:href="@{/catalog}" class="btn btn-outline-primary btn-sm fw-semibold">Discover More</a>
+    </div>
+
+    <div class="row g-3" th:if="${wishlist.products != null and !wishlist.products.isEmpty()}">
+        <div class="col-6 col-md-4 col-lg-3" th:each="product : ${wishlist.products}">
+            <div class="product-card">
+                <!-- Remove Wishlist Form -->
+                <form th:action="@{'/wishlist/remove/' + ${product.id}}" method="POST" class="position-absolute top-0 end-0 m-3 z-3">
+                    <button type="submit" class="btn btn-sm btn-outline-danger p-1 rounded-circle" title="Remove from wishlist" style="width: 32px; height: 32px;">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </form>
+
+                <!-- Product Image -->
+                <a th:href="@{'/product/' + ${product.id}}" class="product-img-box text-decoration-none">
+                    <img th:src="${product.imageUrl != null and !product.imageUrl.isEmpty() ? product.imageUrl : '/images/placeholder-product.svg'}"
+                         onerror="this.src='/images/placeholder-product.svg'"
+                         th:alt="${product.name}"
+                         loading="lazy">
+                </a>
+
+                <!-- Meta -->
+                <div class="product-meta-row">
+                    <span class="product-brand" th:text="${product.brand}">BRAND</span>
+                    <span th:if="${product.vegetarian}" class="veg-indicator"></span>
+                    <span th:unless="${product.vegetarian}" class="non-veg-indicator"></span>
+                </div>
+
+                <a th:href="@{'/product/' + ${product.id}}" class="product-title text-decoration-none" th:text="${product.name}">Product Name</a>
+                <div class="product-size" th:text="${product.packageSize}">1 kg</div>
+
+                <!-- Price -->
+                <div class="product-price-row">
+                    <span class="price-current" th:text="'&#8377;' + ${product.price}">&#8377;199</span>
+                    <span th:if="${product.originalPrice != null and product.originalPrice > product.price}"
+                          class="price-original"
+                          th:text="'&#8377;' + ${product.originalPrice}">&#8377;250</span>
+                </div>
+
+                <!-- Move to Basket -->
+                <form th:action="@{'/wishlist/move-to-cart/' + ${product.id}}" method="POST" class="m-0" th:if="${product.inStock}">
+                    <button type="submit" class="btn-add-cart w-100">
+                        <i class="bi bi-bag-plus"></i> Move to Basket
+                    </button>
+                </form>
+                <div th:unless="${product.inStock}">
+                    <button class="btn-add-cart" disabled>Out of Stock</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty Wishlist State -->
+    <div class="card border-0 shadow-sm p-5 text-center my-4" style="border-radius: 20px;" th:unless="${wishlist.products != null and !wishlist.products.isEmpty()}">
+        <div class="p-4 bg-light rounded-circle d-inline-flex mx-auto mb-3 text-secondary">
+            <i class="bi bi-heartbreak fs-1"></i>
+        </div>
+        <h4 class="fw-bold mb-2">Your Wishlist is Empty</h4>
+        <p class="text-muted small max-w-500 mx-auto mb-4">
+            Click the heart icon on any product to save items you love for future grocery runs.
+        </p>
+        <div>
+            <a th:href="@{/catalog}" class="btn btn-primary px-4 py-2 fw-semibold" style="border-radius: 10px;">
+                Explore Supermarket Aisles
+            </a>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

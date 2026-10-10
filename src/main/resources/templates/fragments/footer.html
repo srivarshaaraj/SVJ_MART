@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<footer th:fragment="footer" class="footer-main">
+    <div class="container-fluid px-3 px-lg-5">
+        <div class="row g-4 mb-4">
+            <!-- Brand & Mission -->
+            <div class="col-12 col-md-4 col-lg-3">
+                <img th:src="@{/images/logo.svg}" alt="SVJ MART" height="42" class="mb-3">
+                <p class="small text-secondary mb-3" style="line-height: 1.6;">
+                    SVJ MART is a next-generation intelligent supermarket platform delivering fresh groceries, staples, home essentials, and personal-care products directly to Indian homes.
+                </p>
+                <div class="d-flex align-items-center gap-2 text-secondary small">
+                    <i class="bi bi-shield-check text-success fs-5"></i>
+                    <span>Secure Transactions &bull; Fresh Quality Guaranteed</span>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="col-6 col-md-4 col-lg-2">
+                <h5>Popular Aisles</h5>
+                <ul class="footer-links">
+                    <li><a th:href="@{/catalog/rice-grains-staples}">Rice, Atta & Dals</a></li>
+                    <li><a th:href="@{/catalog/dairy-products}">Fresh Dairy & Milk</a></li>
+                    <li><a th:href="@{/catalog/fresh-fruits-vegetables}">Fruits & Vegetables</a></li>
+                    <li><a th:href="@{/catalog/cooking-oils-ingredients}">Oils & Pure Ghee</a></li>
+                    <li><a th:href="@{/catalog/snacks-munchies}">Snacks & Biscuits</a></li>
+                    <li><a th:href="@{/catalog/beverages}">Tea, Coffee & Juices</a></li>
+                </ul>
+            </div>
+
+            <!-- Quick Links & Roles -->
+            <div class="col-6 col-md-4 col-lg-2">
+                <h5>Customer Care</h5>
+                <ul class="footer-links">
+                    <li><a th:href="@{/orders}">Track My Order</a></li>
+                    <li><a th:href="@{/cart}">Shopping Basket</a></li>
+                    <li><a th:href="@{/wishlist}">Saved Wishlist</a></li>
+                    <li><a th:href="@{/about}">About Capstone Project</a></li>
+                    <li><a th:href="@{/contact}">Help & Support</a></li>
+                    <li><a th:href="@{/register(role='SELLER')}">Seller Onboarding</a></li>
+                </ul>
+            </div>
+
+            <!-- Capstone Project Info -->
+            <div class="col-12 col-md-6 col-lg-2">
+                <h5>AI & Data Science</h5>
+                <p class="extra-small text-secondary mb-2" style="font-size: 0.8rem; line-height: 1.5;">
+                    Engineered for B.Tech AI & Data Science Capstone. Features Content-Based Recommendation, Market Basket Mining, and Dynamic Budget Knapsack Optimization.
+                </p>
+                <span class="badge bg-primary bg-opacity-25 text-info border border-info border-opacity-25 p-2">
+                    <i class="bi bi-cpu me-1"></i> Spring Boot + AI Engine
+                </span>
+            </div>
+
+            <!-- Functional Newsletter Subscription -->
+            <div class="col-12 col-md-6 col-lg-3">
+                <h5>Stay Updated</h5>
+                <p class="small text-secondary mb-2">Subscribe for weekly supermarket discounts, fresh deals, and promotional vouchers.</p>
+                <form id="newsletterForm" class="mb-2">
+                    <div class="input-group">
+                        <input type="email" name="email" class="form-control form-control-sm" placeholder="Enter your email" required style="border-radius: 8px 0 0 8px;">
+                        <button type="submit" class="btn btn-sm btn-primary px-3" style="border-radius: 0 8px 8px 0;">Join</button>
+                    </div>
+                </form>
+                <div id="newsletterAlert" class="d-none"></div>
+            </div>
+        </div>
+
+        <!-- Bottom Copyright -->
+        <div class="footer-bottom d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+            <div>
+                &copy; 2026 SVJ MART. All rights reserved. B.Tech Artificial Intelligence and Data Science Capstone Project.
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="badge bg-secondary bg-opacity-25 text-light">Java 21 &bull; Spring Boot &bull; H2 / MySQL &bull; Thymeleaf</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Frontend JS -->
+    <script th:src="@{/js/main.js}"></script>
+</footer>
+
+</body>
+</html>

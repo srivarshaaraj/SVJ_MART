@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Review Moderation')}"></head>
+<body>
+
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container-fluid px-3 px-lg-5 py-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-chat-left-text text-primary me-2"></i> Review Moderation</h2>
+            <p class="text-muted small mb-0">Moderate customer feedback and prevent spam or inappropriate comments</p>
+        </div>
+        <a th:href="@{/admin}" class="btn btn-outline-secondary btn-sm fw-semibold">Back to Admin</a>
+    </div>
+
+    <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light extra-small text-uppercase text-secondary">
+                    <tr>
+                        <th>Product</th>
+                        <th>User</th>
+                        <th>Rating</th>
+                        <th>Feedback</th>
+                        <th>Status</th>
+                        <th class="text-end">Moderation Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="r : ${reviews}">
+                        <td>
+                            <strong class="text-dark small d-block" th:text="${r.product != null ? r.product.name : '-'}">Product</strong>
+                            <span class="extra-small text-muted" th:text="${#temporals.format(r.createdAt, 'dd MMM yyyy')}">Date</span>
+                        </td>
+                        <td>
+                            <span class="small fw-semibold text-dark" th:text="${r.user != null ? r.user.name : 'User'}">Shopper</span>
+                        </td>
+                        <td>
+                            <span class="text-warning small">
+                                <i class="bi bi-star-fill" th:each="i : ${#numbers.sequence(1, r.rating)}"></i>
+                            </span>
+                        </td>
+                        <td style="max-width: 320px;">
+                            <strong class="small d-block text-dark" th:text="${r.headline}">Headline</strong>
+                            <span class="extra-small text-muted" th:text="${r.comment}">Comment</span>
+                        </td>
+                        <td>
+                            <span class="badge" th:classappend="${r.approved ? 'bg-success bg-opacity-10 text-success' : 'bg-warning bg-opacity-25 text-dark'}"
+                                  th:text="${r.approved ? 'Approved' : 'Pending'}">Approved</span>
+                        </td>
+                        <td class="text-end">
+                            <div class="d-flex align-items-center justify-content-end gap-2">
+                                <form th:action="@{'/admin/reviews/approve/' + ${r.id}}" method="POST" class="m-0" th:if="${!r.approved}">
+                                    <button type="submit" class="btn btn-sm btn-success py-1 px-2">Approve</button>
+                                </form>
+                                <form th:action="@{'/admin/reviews/delete/' + ${r.id}}" method="POST" class="m-0"
+                                      onsubmit="return confirm('Delete this review permanently?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2"><i class="bi bi-trash"></i></button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

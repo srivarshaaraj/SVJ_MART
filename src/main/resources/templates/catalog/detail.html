@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(${product.name})}"></head>
+<body>
+
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container-fluid px-3 px-lg-5 py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/catalog}" class="text-decoration-none">Catalogue</a></li>
+            <li class="breadcrumb-item" th:if="${product.category != null}">
+                <a th:href="@{'/catalog/' + ${product.category.slug}}" th:text="${product.category.name}" class="text-decoration-none">Category</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${product.name}">Product</li>
+        </ol>
+    </nav>
+
+    <!-- Main Product Card Details -->
+    <div class="card border-0 shadow-sm p-4 mb-5" style="border-radius: 20px;">
+        <div class="row g-4 g-lg-5">
+            <!-- Left: Product Image Box -->
+            <div class="col-12 col-md-5">
+                <div class="p-4 bg-light rounded-4 text-center position-relative d-flex align-items-center justify-content-center" style="min-height: 380px;">
+                    <!-- Discount & Bestseller Badges -->
+                    <div class="position-absolute top-0 start-0 m-3 d-flex flex-column gap-2">
+                        <span th:if="${product.discountPercent > 0}" class="badge-discount" th:text="${product.discountPercent + '% OFF'}">15% OFF</span>
+                        <span th:if="${product.bestseller}" class="badge-bestseller">BESTSELLER</span>
+                        <span th:if="${product.perishable}" class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25">Fresh Produce</span>
+                    </div>
+
+                    <!-- Image -->
+                    <img th:src="${product.imageUrl != null and !product.imageUrl.isEmpty() ? product.imageUrl : '/images/placeholder-product.svg'}"
+                         onerror="this.src='/images/placeholder-product.svg'"
+                         th:alt="${product.name}"
+                         class="img-fluid"
+                         style="max-height: 320px; object-fit: contain;">
+                </div>
+            </div>
+
+            <!-- Right: Product Information & Purchase Controls -->
+            <div class="col-12 col-md-7">
+                <!-- Brand & Diet Pill -->
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="badge bg-primary bg-opacity-10 text-primary fw-bold text-uppercase" th:text="${product.brand}">BRAND</span>
+                    <span th:if="${product.vegetarian}" class="d-inline-flex align-items-center gap-1 small text-success fw-semibold">
+                        <span class="veg-indicator"></span> 100% Vegetarian
+                    </span>
+                    <span th:unless="${product.vegetarian}" class="d-inline-flex align-items-center gap-1 small text-danger fw-semibold">
+                        <span class="non-veg-indicator"></span> Non-Vegetarian
+                    </span>
+                </div>
+
+                <!-- Product Title -->
+                <h1 class="h3 fw-bold mb-2" th:text="${product.name}">Product Name</h1>
+
+                <!-- Package Size & Subcategory -->
+                <div class="text-muted small mb-3">
+                    <span class="fw-semibold text-dark" th:text="${product.packageSize}">1 kg</span> &bull;
+                    <span th:text="${product.subcategory != null ? product.subcategory : 'General Pantry'}">Staples</span> &bull;
+                    <span th:if="${product.seller != null}" class="text-secondary" th:text="'Sold by ' + ${product.seller.name}">Direct</span>
+                </div>
+
+                <!-- Rating -->
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="badge bg-success px-2 py-1 fs-6 d-inline-flex align-items-center gap-1">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <span th:text="${product.averageRating}">4.5</span>
+                    </div>
+                    <span class="text-muted small" th:text="${product.reviewCount} + ' Verified Ratings & Reviews'">(42 ratings)</span>
+                </div>
+
+                <hr class="my-3 opacity-25">
+
+                <!-- Price Breakdown -->
+                <div class="d-flex align-items-baseline gap-3 mb-2">
+                    <span class="fs-2 fw-bold text-dark font-monospace" th:text="'&#8377;' + ${product.price}">&#8377;285</span>
+                    <span th:if="${product.originalPrice != null and product.originalPrice > product.price}"
+                          class="fs-5 text-muted text-decoration-line-through font-monospace"
+                          th:text="'&#8377;' + ${product.originalPrice}">&#8377;325</span>
+                    <span th:if="${product.discountPercent > 0}" class="badge bg-danger bg-opacity-10 text-danger fw-bold">
+                        Save &#8377;<span th:text="${product.savings}">40</span> (<span th:text="${product.discountPercent}">12</span>%)
+                    </span>
+                </div>
+                <div class="extra-small text-muted mb-4">Inclusive of all supermarket taxes. Standard delivery in 24-48 hrs.</div>
+
+                <!-- Stock Status -->
+                <div class="mb-4">
+                    <div th:if="${product.inStock}">
+                        <span class="badge bg-success bg-opacity-10 text-success p-2 small">
+                            <i class="bi bi-check-circle-fill me-1"></i> In Stock &bull; Ready for Immediate Packing
+                        </span>
+                        <span th:if="${product.lowStock}" class="badge bg-warning bg-opacity-25 text-dark ms-2 p-2 small">
+                            Only <span th:text="${product.stockQuantity}">4</span> units remaining!
+                        </span>
+                    </div>
+                    <div th:unless="${product.inStock}">
+                        <span class="badge bg-danger bg-opacity-10 text-danger p-2 small">
+                            <i class="bi bi-x-circle-fill me-1"></i> Currently Out of Stock
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Purchase Buttons -->
+                <div class="d-flex flex-wrap align-items-center gap-3 mb-4" th:if="${product.inStock}">
+                    <form th:action="@{/cart/add}" method="POST" class="d-flex align-items-center gap-2 m-0">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <div class="input-group" style="width: 120px;">
+                            <input type="number" name="quantity" class="form-control text-center fw-bold" value="1" min="1" th:max="${product.stockQuantity}">
+                        </div>
+                        <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2 shadow-sm" style="border-radius: 10px;">
+                            <i class="bi bi-basket2-fill"></i> Add to Basket
+                        </button>
+                    </form>
+
+                    <!-- Wishlist Toggle -->
+                    <form th:action="@{'/wishlist/toggle/' + ${product.id}}" method="POST" class="m-0">
+                        <button type="submit" class="btn btn-outline-secondary px-3 py-2 fw-semibold d-inline-flex align-items-center gap-2"
+                                th:classappend="${inWishlist ? 'text-danger border-danger' : ''}" style="border-radius: 10px;">
+                            <i class="bi" th:classappend="${inWishlist ? 'bi-heart-fill' : 'bi-heart'}"></i>
+                            <span th:text="${inWishlist ? 'Saved in Wishlist' : 'Add to Wishlist'}">Wishlist</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Trust Guarantee Badge -->
+                <div class="p-3 bg-light rounded-3 border d-flex align-items-center gap-3">
+                    <i class="bi bi-shield-check text-success fs-3"></i>
+                    <div class="small">
+                        <strong>SVJ MART Freshness & Quality Promise</strong><br>
+                        <span class="text-muted">100% genuine product directly sourced. Free returns if quality is unsatisfactory.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Specifications & Dietary Tabs -->
+    <div class="card border-0 shadow-sm p-4 mb-5" style="border-radius: 20px;">
+        <ul class="nav nav-tabs nav-fill mb-4" id="productTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-bold" id="desc-tab" data-bs-toggle="tab" data-bs-target="#desc" type="button" role="tab">Description</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold" id="ingredients-tab" data-bs-toggle="tab" data-bs-target="#ingredients" type="button" role="tab">Ingredients & Nutrition</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold" id="storage-tab" data-bs-toggle="tab" data-bs-target="#storage" type="button" role="tab">Storage & Shelf Life</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="productTabsContent">
+            <!-- Tab 1: Description -->
+            <div class="tab-pane fade show active" id="desc" role="tabpanel">
+                <h5 class="fw-bold mb-3">Product Overview</h5>
+                <p class="text-muted" style="line-height: 1.8;" th:text="${product.description}">Detailed supermarket product description.</p>
+            </div>
+
+            <!-- Tab 2: Ingredients & Nutrition -->
+            <div class="tab-pane fade" id="ingredients" role="tabpanel">
+                <div class="row g-4">
+                    <div class="col-12 col-md-6">
+                        <h6 class="fw-bold text-primary mb-2">Ingredients & Formulation</h6>
+                        <p class="text-muted small" th:text="${product.ingredients != null ? product.ingredients : 'Standard food-grade ingredients as per FSSAI regulations.'}">Ingredients list</p>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <h6 class="fw-bold text-primary mb-2">Nutritional Information</h6>
+                        <p class="text-muted small" th:text="${product.nutritionalInfo != null ? product.nutritionalInfo : 'Values per 100g as stated on manufacturer package.'}">Nutritional facts</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Storage & Shelf Life -->
+            <div class="tab-pane fade" id="storage" role="tabpanel">
+                <div class="row g-4">
+                    <div class="col-12 col-md-6">
+                        <h6 class="fw-bold text-primary mb-2">Storage Instructions</h6>
+                        <p class="text-muted small" th:text="${product.storageInstructions != null ? product.storageInstructions : 'Store in a cool, dry place away from direct sunlight.'}">Storage instructions</p>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <h6 class="fw-bold text-primary mb-2">Shelf Life</h6>
+                        <p class="text-muted small" th:text="${product.shelfLife != null ? product.shelfLife : 'Best before 6 months from packaging date.'}">Shelf life</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Frequently Bought Together Bundle -->
+    <div class="card border-0 shadow-sm p-4 mb-5 bg-white" style="border-radius: 20px;" th:if="${frequentlyBoughtTogether != null and !frequentlyBoughtTogether.isEmpty()}">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <span class="badge bg-info bg-opacity-25 text-info border border-info border-opacity-25 extra-small mb-1">
+                    <i class="bi bi-stars"></i> Market Basket Association Mining
+                </span>
+                <h4 class="fw-bold m-0">Frequently Bought Together</h4>
+                <p class="text-muted small m-0">Complementary staples and culinary pairings for your basket</p>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <th:block th:each="rec : ${frequentlyBoughtTogether}">
+                <div th:replace="~{fragments/product-card :: card(${rec})}"></div>
+            </th:block>
+        </div>
+    </div>
+
+    <!-- Customer Reviews & Submission Form -->
+    <div class="card border-0 shadow-sm p-4 mb-5" style="border-radius: 20px;">
+        <div class="row g-4">
+            <!-- Left: Reviews List -->
+            <div class="col-12 col-lg-7">
+                <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom">
+                    <h4 class="fw-bold m-0">Customer Ratings & Reviews</h4>
+                    <span class="badge bg-secondary" th:text="${reviews.size()} + ' Reviews'">0 Reviews</span>
+                </div>
+
+                <div class="d-flex flex-column gap-3" th:if="${!reviews.isEmpty()}">
+                    <div class="p-3 bg-light rounded-3 border" th:each="rev : ${reviews}">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="text-warning">
+                                <i class="bi bi-star-fill" th:each="i : ${#numbers.sequence(1, rev.rating)}"></i>
+                            </div>
+                            <span class="badge bg-success bg-opacity-10 text-success extra-small">Verified Purchase</span>
+                        </div>
+                        <h6 class="fw-bold mb-1" th:text="${rev.headline}">Headline</h6>
+                        <p class="small text-muted mb-2" th:text="${rev.comment}">Review comment</p>
+                        <div class="extra-small text-secondary">
+                            By <strong th:text="${rev.user != null ? rev.user.name : 'Customer'}">Shopper</strong> &bull;
+                            <span th:text="${#temporals.format(rev.createdAt, 'dd MMM yyyy')}">Date</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-light rounded-3 text-center text-muted" th:if="${reviews.isEmpty()}">
+                    <i class="bi bi-chat-heart fs-1 text-secondary mb-2 d-block"></i>
+                    <p class="mb-0 small">No customer reviews yet. Be the first to share your thoughts on this product!</p>
+                </div>
+            </div>
+
+            <!-- Right: Submit Review Form -->
+            <div class="col-12 col-lg-5">
+                <div class="p-4 bg-light rounded-4 border">
+                    <h5 class="fw-bold mb-2">Leave a Product Review</h5>
+                    <p class="text-muted extra-small mb-3">Help fellow shoppers with genuine feedback on quality, packaging, and freshness.</p>
+
+                    <form th:action="@{/review/submit}" th:object="${reviewDto}" method="POST">
+                        <input type="hidden" th:field="*{productId}">
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Rating</label>
+                            <select th:field="*{rating}" class="form-select form-select-sm">
+                                <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733; (5 Stars - Excellent)</option>
+                                <option value="4">&#9733;&#9733;&#9733;&#9733; (4 Stars - Good)</option>
+                                <option value="3">&#9733;&#9733;&#9733; (3 Stars - Average)</option>
+                                <option value="2">&#9733;&#9733; (2 Stars - Below Average)</option>
+                                <option value="1">&#9733; (1 Star - Poor)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Headline</label>
+                            <input type="text" th:field="*{headline}" class="form-control form-control-sm" placeholder="e.g. Great quality, fresh and soft!">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Your Review *</label>
+                            <textarea th:field="*{comment}" rows="3" class="form-control form-control-sm" placeholder="Share your experience with freshness, package seal, taste..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-sm w-100 fw-semibold py-2">
+                            Submit Review
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    <div class="my-5" th:if="${relatedProducts != null and !relatedProducts.isEmpty()}">
+        <h4 class="fw-bold mb-4">Related in This Aisle</h4>
+        <div class="row g-3">
+            <th:block th:each="rel : ${relatedProducts}">
+                <div th:replace="~{fragments/product-card :: card(${rel})}"></div>
+            </th:block>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

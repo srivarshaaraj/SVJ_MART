@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Seller Orders')}"></head>
+<body>
+
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container-fluid px-3 px-lg-5 py-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-truck text-primary me-2"></i> Order Fulfilment</h2>
+            <p class="text-muted small mb-0">Manage customer orders containing products fulfilled from your store</p>
+        </div>
+        <a th:href="@{/seller/dashboard}" class="btn btn-outline-secondary btn-sm fw-semibold">Back to Dashboard</a>
+    </div>
+
+    <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light extra-small text-uppercase text-secondary">
+                    <tr>
+                        <th>Order Ref</th>
+                        <th>Date</th>
+                        <th>Customer & Destination</th>
+                        <th>Items</th>
+                        <th>Order Total</th>
+                        <th>Status</th>
+                        <th class="text-end">Update Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td>
+                            <strong class="font-monospace small text-primary" th:text="${order.orderNumber}">SVJ-20261010-XXXX</strong>
+                        </td>
+                        <td class="small text-muted" th:text="${#temporals.format(order.orderDate, 'dd MMM yyyy, hh:mm a')}">10 Oct</td>
+                        <td>
+                            <div class="small fw-semibold text-dark" th:text="${order.recipientName}">Customer</div>
+                            <div class="extra-small text-muted" th:text="${order.city} + ', ' + ${order.pincode}">City</div>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border small" th:text="${order.items.size()} + ' Items'">2 Items</span>
+                        </td>
+                        <td class="font-monospace fw-bold small text-dark" th:text="'&#8377;' + ${order.finalTotal}">&#8377;540</td>
+                        <td>
+                            <span class="badge py-2 px-3 small"
+                                  th:classappend="${order.status.name() == 'DELIVERED' ? 'bg-success' : (order.status.name() == 'CANCELLED' ? 'bg-danger' : (order.status.name() == 'OUT_FOR_DELIVERY' ? 'bg-warning text-dark' : 'bg-primary'))}"
+                                  th:text="${order.status.displayName}">Status</span>
+                        </td>
+                        <td class="text-end">
+                            <form th:action="@{/seller/orders/status}" method="POST" class="d-inline-flex align-items-center gap-1 m-0">
+                                <input type="hidden" name="orderId" th:value="${order.id}">
+                                <select name="status" class="form-select form-select-sm" style="width: auto;">
+                                    <option th:each="s : ${orderStatuses}" th:value="${s}" th:text="${s.displayName}" th:selected="${order.status == s}"></option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center py-4 text-muted small" th:if="${orders == null or orders.isEmpty()}">
+            <i class="bi bi-box2 fs-1 text-secondary mb-2 d-block"></i>
+            No active orders for your listed products at this time.
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

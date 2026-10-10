@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Supermarket Catalogue')}"></head>
+<body>
+
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container-fluid px-3 px-lg-5 py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${selectedCategory != null ? selectedCategory.name : 'All Products'}">Catalogue</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Left Filter Sidebar -->
+        <div class="col-12 col-lg-3">
+            <div class="card border-0 shadow-sm p-3 p-md-4" style="border-radius: 16px;">
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                    <h5 class="fw-bold m-0"><i class="bi bi-funnel me-1 text-primary"></i> Filters</h5>
+                    <a th:href="@{/catalog}" class="extra-small text-muted text-decoration-none">Reset All</a>
+                </div>
+
+                <form th:action="@{/catalog}" method="GET" id="filterForm">
+                    <input type="hidden" name="keyword" th:value="${keyword}">
+                    <input type="hidden" name="sort" th:value="${currentSort}">
+
+                    <!-- Category Filter -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase text-secondary mb-2" style="font-size:0.75rem;">Category</label>
+                        <select name="category" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="">All 16 Categories</option>
+                            <option th:each="cat : ${categories}"
+                                    th:value="${cat.id}"
+                                    th:text="${cat.name}"
+                                    th:selected="${selectedCategoryId != null && selectedCategoryId == cat.id}">
+                                Category Name
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Brand Filter -->
+                    <div class="mb-4" th:if="${brands != null and !brands.isEmpty()}">
+                        <label class="form-label small fw-bold text-uppercase text-secondary mb-2" style="font-size:0.75rem;">Brand</label>
+                        <select name="brand" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="">All Brands</option>
+                            <option th:each="b : ${brands}"
+                                    th:value="${b}"
+                                    th:text="${b}"
+                                    th:selected="${selectedBrand != null && selectedBrand == b}">
+                                Brand Name
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Price Range -->
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-uppercase text-secondary mb-2" style="font-size:0.75rem;">Price (&#8377;)</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="number" name="minPrice" th:value="${minPrice}" class="form-control form-control-sm" placeholder="Min" min="0">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" name="maxPrice" th:value="${maxPrice}" class="form-control form-control-sm" placeholder="Max" min="0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Vegetarian Preference -->
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="vegOnly" value="true" id="vegOnlySwitch"
+                                   th:checked="${vegOnly != null && vegOnly}" onchange="this.form.submit()">
+                            <label class="form-check-label small fw-semibold" for="vegOnlySwitch">
+                                <span class="veg-indicator me-1"></span> Veg Only
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- In-Stock Only -->
+                    <div class="mb-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" name="inStockOnly" value="true" id="inStockSwitch"
+                                   th:checked="${inStockOnly != null && inStockOnly}" onchange="this.form.submit()">
+                            <label class="form-check-label small fw-semibold" for="inStockSwitch">
+                                <i class="bi bi-check2-circle text-success me-1"></i> In Stock Only
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-sm w-100 fw-semibold py-2">
+                        Apply Filters
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Product Grid Area -->
+        <div class="col-12 col-lg-9">
+            <!-- Filter & Sort Bar -->
+            <div class="card border-0 shadow-sm p-3 mb-4" style="border-radius: 14px;">
+                <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                    <div>
+                        <h4 class="fw-bold mb-1" th:text="${selectedCategory != null ? selectedCategory.name : (keyword != null ? 'Search Results: &quot;' + keyword + '&quot;' : 'All Supermarket Products')}">
+                            Product Catalogue
+                        </h4>
+                        <span class="text-muted small" th:text="'Showing ' + ${productsPage.totalElements} + ' products'">Showing 100 products</span>
+                    </div>
+
+                    <!-- Sort Controls -->
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="sortBySelect" class="small text-muted fw-semibold mb-0 text-nowrap">Sort By:</label>
+                        <select id="sortBySelect" class="form-select form-select-sm" style="width: auto;"
+                                onchange="location.href = updateQueryString('sort', this.value)">
+                            <option value="featured" th:selected="${currentSort == 'featured'}">Featured / Newest</option>
+                            <option value="price-asc" th:selected="${currentSort == 'price-asc'}">Price: Low to High</option>
+                            <option value="price-desc" th:selected="${currentSort == 'price-desc'}">Price: High to Low</option>
+                            <option value="rating" th:selected="${currentSort == 'rating'}">Customer Rating</option>
+                            <option value="popular" th:selected="${currentSort == 'popular'}">Most Popular</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Listing -->
+            <div class="row g-3" th:if="${productsPage.hasContent()}">
+                <th:block th:each="product : ${productsPage.content}">
+                    <div th:replace="~{fragments/product-card :: card(${product})}"></div>
+                </th:block>
+            </div>
+
+            <!-- Empty State -->
+            <div class="text-center py-5 bg-white rounded-3 shadow-sm my-3" th:unless="${productsPage.hasContent()}">
+                <div class="p-3 bg-light rounded-circle d-inline-flex mb-3">
+                    <i class="bi bi-search text-muted fs-1"></i>
+                </div>
+                <h5 class="fw-bold">No Products Found</h5>
+                <p class="text-muted small max-w-500 mx-auto mb-3">
+                    We couldn't find items matching your filter criteria. Try adjusting the price range or resetting filters.
+                </p>
+                <a th:href="@{/catalog}" class="btn btn-outline-primary btn-sm px-4">Reset All Filters</a>
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center mt-5" th:if="${productsPage.totalPages > 1}">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination pagination-sm gap-1">
+                        <li class="page-item" th:classappend="${productsPage.first ? 'disabled' : ''}">
+                            <a class="page-link rounded-2" th:href="@{/catalog(page=${productsPage.number - 1}, keyword=${keyword}, category=${selectedCategoryId}, brand=${selectedBrand}, minPrice=${minPrice}, maxPrice=${maxPrice}, vegOnly=${vegOnly}, inStockOnly=${inStockOnly}, sort=${currentSort})}">
+                                &laquo; Prev
+                            </a>
+                        </li>
+                        <li class="page-item" th:each="p : ${#numbers.sequence(0, productsPage.totalPages - 1)}"
+                            th:classappend="${p == productsPage.number ? 'active' : ''}">
+                            <a class="page-link rounded-2" th:text="${p + 1}"
+                               th:href="@{/catalog(page=${p}, keyword=${keyword}, category=${selectedCategoryId}, brand=${selectedBrand}, minPrice=${minPrice}, maxPrice=${maxPrice}, vegOnly=${vegOnly}, inStockOnly=${inStockOnly}, sort=${currentSort})}">
+                                1
+                            </a>
+                        </li>
+                        <li class="page-item" th:classappend="${productsPage.last ? 'disabled' : ''}">
+                            <a class="page-link rounded-2" th:href="@{/catalog(page=${productsPage.number + 1}, keyword=${keyword}, category=${selectedCategoryId}, brand=${selectedBrand}, minPrice=${minPrice}, maxPrice=${maxPrice}, vegOnly=${vegOnly}, inStockOnly=${inStockOnly}, sort=${currentSort})}">
+                                Next &raquo;
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updateQueryString(key, value) {
+    const url = new URL(window.location.href);
+    url.searchParams.set(key, value);
+    return url.toString();
+}
+</script>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

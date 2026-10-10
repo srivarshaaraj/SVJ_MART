@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="card(product)" class="col-6 col-md-4 col-lg-3">
+    <div class="product-card">
+        <!-- Badges (Discount, Bestseller) -->
+        <div class="product-badge-wrap">
+            <span th:if="${product.discountPercent > 0}" class="badge-discount" th:text="${product.discountPercent + '% OFF'}">15% OFF</span>
+            <span th:if="${product.bestseller}" class="badge-bestseller">BESTSELLER</span>
+        </div>
+
+        <!-- Wishlist Toggle Button -->
+        <form th:action="@{'/wishlist/toggle/' + ${product.id}}" method="POST" class="m-0">
+            <button type="submit" class="btn-wishlist" title="Add to Wishlist">
+                <i class="bi bi-heart"></i>
+            </button>
+        </form>
+
+        <!-- Product Image Container -->
+        <a th:href="@{'/product/' + ${product.id}}" class="product-img-box text-decoration-none">
+            <img th:src="${product.imageUrl != null and !product.imageUrl.isEmpty() ? product.imageUrl : '/images/placeholder-product.svg'}"
+                 onerror="this.src='/images/placeholder-product.svg'"
+                 th:alt="${product.name}"
+                 loading="lazy">
+        </a>
+
+        <!-- Meta (Brand & Veg indicator) -->
+        <div class="product-meta-row">
+            <span class="product-brand" th:text="${product.brand}">BRAND</span>
+            <span th:if="${product.vegetarian}" class="veg-indicator" title="100% Vegetarian"></span>
+            <span th:unless="${product.vegetarian}" class="non-veg-indicator" title="Non-Vegetarian"></span>
+        </div>
+
+        <!-- Product Title -->
+        <a th:href="@{'/product/' + ${product.id}}" class="product-title text-decoration-none" th:text="${product.name}">
+            Product Name
+        </a>
+
+        <!-- Package Size -->
+        <div class="product-size" th:text="${product.packageSize}">1 kg</div>
+
+        <!-- Rating & Reviews -->
+        <div class="product-rating">
+            <span class="star-filled"><i class="bi bi-star-fill"></i></span>
+            <span th:text="${product.averageRating}">4.5</span>
+            <span class="text-muted" th:text="'(' + ${product.reviewCount} + ')'">(42)</span>
+        </div>
+
+        <!-- Price Row -->
+        <div class="product-price-row">
+            <span class="price-current" th:text="'&#8377;' + ${product.price}">&#8377;199</span>
+            <span th:if="${product.originalPrice != null and product.originalPrice > product.price}"
+                  class="price-original"
+                  th:text="'&#8377;' + ${product.originalPrice}">&#8377;250</span>
+        </div>
+
+        <!-- Stock Availability and Add to Basket -->
+        <div th:if="${product.inStock}">
+            <form th:action="@{/cart/add}" method="POST" class="m-0">
+                <input type="hidden" name="productId" th:value="${product.id}">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="btn-add-cart">
+                    <i class="bi bi-cart-plus"></i> Add to Basket
+                </button>
+            </form>
+        </div>
+        <div th:unless="${product.inStock}">
+            <button class="btn-add-cart" disabled>
+                <i class="bi bi-slash-circle"></i> Out of Stock
+            </button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

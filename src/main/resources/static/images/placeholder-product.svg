@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 350" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAFC"/>
+      <stop offset="100%" stop-color="#E2E8F0"/>
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#287BFF" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#16A34A" stop-opacity="0.1"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="350" fill="url(#bgGrad)"/>
+  <circle cx="200" cy="160" r="90" fill="url(#glowGrad)"/>
+  <!-- Grocery Essentials Motif -->
+  <g transform="translate(145, 100)" stroke="#142B4A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Pouch / Pack / Bottle -->
+    <rect x="25" y="40" width="60" height="75" rx="10" fill="#FFFFFF" fill-opacity="0.9"/>
+    <!-- Seal lines -->
+    <line x1="35" y1="40" x2="75" y2="40" stroke="#287BFF" stroke-width="6"/>
+    <!-- Fresh Leaf -->
+    <path d="M55 25 C55 12 70 12 70 25 C55 25 55 25 55 25 Z" fill="#16A34A" stroke="#16A34A" stroke-width="2"/>
+    <!-- Ribbon badge -->
+    <circle cx="55" cy="75" r="14" fill="#F59E0B" stroke="#F59E0B"/>
+    <path d="M50 75 L54 79 L61 71" stroke="#FFFFFF" stroke-width="2.5"/>
+  </g>
+  <text x="200" y="270" font-family="'Space Grotesk', system-ui, sans-serif" font-size="16" font-weight="700" fill="#142B4A" text-anchor="middle">SVJ MART QUALITY</text>
+  <text x="200" y="292" font-family="'Inter', system-ui, sans-serif" font-size="12" font-weight="500" fill="#687386" text-anchor="middle">Supermarket Verified Fresh</text>
+</svg>

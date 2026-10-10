@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Help & Support')}"></head>
+<body>
+
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container-fluid px-3 px-lg-5 py-5">
+    <div class="max-w-900 mx-auto">
+        <div class="text-center mb-5">
+            <h1 class="fw-bold mb-2">Customer Care & Support</h1>
+            <p class="text-muted small">We are here to assist with grocery orders, delivery queries, and seller inquiries.</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Contact Info -->
+            <div class="col-12 col-md-5">
+                <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 16px;">
+                    <h5 class="fw-bold mb-3 text-primary">Get in Touch</h5>
+
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        <i class="bi bi-geo-alt-fill text-danger fs-5"></i>
+                        <div class="small">
+                            <strong>SVJ MART Central Fulfillment Center</strong><br>
+                            <span class="text-muted">100 Feet Road, Indiranagar, Bengaluru, Karnataka - 560038</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        <i class="bi bi-telephone-fill text-success fs-5"></i>
+                        <div class="small">
+                            <strong>Customer Support Helpline</strong><br>
+                            <span class="text-muted">+91 (080) 2450-8900 (Mon - Sun, 7 AM - 10 PM)</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        <i class="bi bi-envelope-fill text-primary fs-5"></i>
+                        <div class="small">
+                            <strong>Email Inquiries</strong><br>
+                            <span class="text-muted">support@svjmart.com</span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded-3 border mt-auto">
+                        <div class="extra-small fw-bold text-uppercase text-secondary mb-1">Academic Inquiries</div>
+                        <p class="extra-small text-muted mb-0">Department of Artificial Intelligence & Data Science, Capstone Project Team.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Support Form -->
+            <div class="col-12 col-md-7">
+                <div class="card border-0 shadow-sm p-4 h-100" style="border-radius: 16px;">
+                    <h5 class="fw-bold mb-3">Send Us a Message</h5>
+
+                    <form onsubmit="alert('Thank you! Your inquiry has been received. Our support team will get in touch shortly.'); return false;">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Your Name *</label>
+                            <input type="text" class="form-control form-control-sm" required placeholder="Rajesh Kumar">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Email Address *</label>
+                            <input type="email" class="form-control form-control-sm" required placeholder="rajesh@example.com">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Inquiry Subject</label>
+                            <select class="form-select form-select-sm">
+                                <option>Order Delivery Status</option>
+                                <option>Product Quality / Freshness Query</option>
+                                <option>Seller Onboarding</option>
+                                <option>Academic / Technical Demonstration</option>
+                                <option>Other Inquiry</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Message *</label>
+                            <textarea class="form-control form-control-sm" rows="4" required placeholder="Please provide details..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-sm px-4 fw-semibold py-2">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

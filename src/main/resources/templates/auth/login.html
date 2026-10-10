@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In &bull; SVJ MART</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            /* Vibrant modern indigo-purple gradient from user reference */
+            background: linear-gradient(180deg, #6078EA 0%, #4D5CD4 40%, #5C3FB2 100%);
+            color: #172033;
+        }
+
+        /* Top navigation link */
+        .top-nav {
+            width: 100%;
+            max-width: 440px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .capstone-badge {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(8px);
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.02em;
+        }
+
+        /* Centered White Card */
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 36px 32px 32px;
+            box-shadow: 0 25px 60px rgba(18, 24, 76, 0.32);
+            transition: transform 0.2s ease;
+        }
+
+        /* Card Header */
+        .card-header-brand {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .brand-logo-wrap {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .brand-title {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 1.85rem;
+            font-weight: 700;
+            color: #3B5CE8;
+            letter-spacing: -0.02em;
+            display: inline-block;
+        }
+
+        .brand-subtitle {
+            font-size: 0.93rem;
+            color: #64748B;
+            line-height: 1.45;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        /* Login As Section */
+        .section-label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1E293B;
+            margin-bottom: 10px;
+        }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .role-btn {
+            background: #ffffff;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 14px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            outline: none;
+        }
+
+        .role-btn:hover {
+            border-color: #94A3B8;
+            transform: translateY(-1px);
+        }
+
+        .role-btn.active {
+            border-color: #3B5CE8;
+            background: #F0F4FF;
+            box-shadow: 0 4px 14px rgba(59, 92, 232, 0.18);
+        }
+
+        .role-btn .role-icon {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .role-btn .role-name {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #334155;
+            transition: color 0.2s ease;
+        }
+
+        .role-btn.active .role-name {
+            color: #1E293B;
+            font-weight: 700;
+        }
+
+        /* Form Inputs */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #1E293B;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 48px;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 0 16px;
+            font-size: 0.95rem;
+            color: #1E293B;
+            background: #ffffff;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .form-input::placeholder {
+            color: #94A3B8;
+            font-size: 0.92rem;
+        }
+
+        .form-input:focus {
+            border-color: #3B5CE8;
+            box-shadow: 0 0 0 3px rgba(59, 92, 232, 0.15);
+        }
+
+        /* Password with inline Show toggle */
+        .password-input-wrapper .form-input {
+            padding-right: 64px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            background: none;
+            border: none;
+            color: #3B5CE8;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 6px;
+            user-select: none;
+            outline: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            opacity: 0.8;
+        }
+
+        /* Forgot password link */
+        .forgot-password-wrap {
+            text-align: right;
+            margin-top: 8px;
+            margin-bottom: 22px;
+        }
+
+        .forgot-password-link {
+            color: #3B5CE8;
+            font-size: 0.88rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: text-decoration 0.2s ease;
+        }
+
+        .forgot-password-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Login button */
+        .login-btn {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #5B72EA 0%, #4D5CD4 100%);
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 8px 22px rgba(91, 114, 234, 0.38);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 26px rgba(91, 114, 234, 0.45);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Card footer */
+        .card-footer-text {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 0.92rem;
+            color: #64748B;
+        }
+
+        .create-account-link {
+            color: #3B5CE8;
+            font-weight: 700;
+            text-decoration: none;
+            margin-left: 4px;
+            transition: text-decoration 0.2s ease;
+        }
+
+        .create-account-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Alert notifications */
+        .alert-box {
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.88rem;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alert-box.alert-danger {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #FCA5A5;
+        }
+
+        .alert-box.alert-success {
+            background: #DCFCE7;
+            color: #166534;
+            border: 1px solid #86EFAC;
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 28px 20px 24px;
+                border-radius: 24px;
+            }
+            .brand-title {
+                font-size: 1.6rem;
+            }
+            .roles-grid {
+                gap: 8px;
+            }
+            .role-btn {
+                padding: 12px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <div class="top-nav">
+        <a th:href="@{/}" class="back-link">
+            <i class="bi bi-arrow-left"></i> Back to Store
+        </a>
+        <span class="capstone-badge">
+            <i class="bi bi-mortarboard-fill me-1"></i> B.Tech AI &amp; DS Capstone
+        </span>
+    </div>
+
+    <!-- Centered Card -->
+    <div class="login-card">
+        <!-- Brand Header -->
+        <div class="card-header-brand">
+            <div class="brand-logo-wrap">
+                <!-- SVG Shopping Cart Logo Icon -->
+                <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="29" r="2.5" fill="#EF4444"/>
+                    <circle cx="25" cy="29" r="2.5" fill="#EF4444"/>
+                    <path d="M4 6H7.5L11 22H27L30 11H8.5" stroke="#3B5CE8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 11H29" stroke="#60A5FA" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M11 16H28" stroke="#60A5FA" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span class="brand-title">SVJ Mart</span>
+            </div>
+            <p class="brand-subtitle">
+                Welcome back! Select your account type and login.
+            </p>
+        </div>
+
+        <!-- Feedback Alert Messages -->
+        <div th:if="${errorMessage != null}" class="alert-box alert-danger">
+            <i class="bi bi-exclamation-circle-fill"></i>
+            <span th:text="${errorMessage}">Invalid credentials</span>
+        </div>
+        <div th:if="${successMessage != null}" class="alert-box alert-success">
+            <i class="bi bi-check-circle-fill"></i>
+            <span th:text="${successMessage}">Logged out successfully</span>
+        </div>
+
+        <!-- Login As Role Selector -->
+        <div class="login-as-section">
+            <span class="section-label">Login As</span>
+            <div class="roles-grid">
+                <!-- Buyer Option -->
+                <button type="button" class="role-btn active" id="btnRoleBuyer"
+                        data-role="BUYER"
+                        data-email="buyer@svjmart.com"
+                        data-pass="Buyer@1234">
+                    <div class="role-icon">
+                        <!-- Buyer Shopping Bags Icon -->
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Green/Teal Bag -->
+                            <rect x="4" y="10" width="14" height="18" rx="2" fill="#10B981"/>
+                            <path d="M7 10V7C7 5.34315 8.34315 4 10 4V4C11.6569 4 13 5.34315 13 7V10" stroke="#059669" stroke-width="2" stroke-linecap="round"/>
+                            <!-- Pink Bag Behind/Overlap -->
+                            <rect x="14" y="12" width="14" height="16" rx="2" fill="#F43F5E"/>
+                            <path d="M17 12V9C17 7.34315 18.3431 6 20 6V6C21.6569 6 23 7.34315 23 9V12" stroke="#E11D48" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <span class="role-name">Buyer</span>
+                </button>
+
+                <!-- Seller Option -->
+                <button type="button" class="role-btn" id="btnRoleSeller"
+                        data-role="SELLER"
+                        data-email="seller@svjmart.com"
+                        data-pass="Seller@1234">
+                    <div class="role-icon">
+                        <!-- Seller 24 Storefront Icon -->
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Roof Awning -->
+                            <rect x="5" y="12" width="22" height="5" rx="1.5" fill="#0EA5E9"/>
+                            <path d="M5 14.5L7 12H25L27 14.5" fill="#38BDF8"/>
+                            <!-- 24 badge on roof -->
+                            <rect x="11" y="5" width="10" height="7" rx="1.5" fill="#F97316"/>
+                            <text x="16" y="10.5" font-size="5" font-weight="bold" fill="#ffffff" text-anchor="middle" font-family="sans-serif">24</text>
+                            <!-- Store walls -->
+                            <rect x="7" y="17" width="18" height="11" fill="#E2E8F0"/>
+                            <!-- Door and Windows -->
+                            <rect x="9" y="19" width="5" height="9" fill="#0284C7"/>
+                            <rect x="18" y="19" width="5" height="9" fill="#0284C7"/>
+                        </svg>
+                    </div>
+                    <span class="role-name">Seller</span>
+                </button>
+
+                <!-- Admin Option -->
+                <button type="button" class="role-btn" id="btnRoleAdmin"
+                        data-role="ADMIN"
+                        data-email="admin@svjmart.com"
+                        data-pass="Admin@1234">
+                    <div class="role-icon">
+                        <!-- Admin Royal Crown Icon -->
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Gold Crown -->
+                            <path d="M5 24L7 11L12.5 17L16 8L19.5 17L25 11L27 24H5Z" fill="#F59E0B" stroke="#D97706" stroke-width="1.5" stroke-linejoin="round"/>
+                            <!-- Crown base band -->
+                            <rect x="5" y="23" width="22" height="4" rx="1.5" fill="#D97706"/>
+                            <!-- Gems -->
+                            <circle cx="16" cy="25" r="1.3" fill="#EF4444"/>
+                            <circle cx="10" cy="25" r="1.3" fill="#10B981"/>
+                            <circle cx="22" cy="25" r="1.3" fill="#3B82F6"/>
+                            <circle cx="16" cy="8" r="1.6" fill="#FCD34D"/>
+                            <circle cx="7" cy="11" r="1.6" fill="#FCD34D"/>
+                            <circle cx="25" cy="11" r="1.6" fill="#FCD34D"/>
+                        </svg>
+                    </div>
+                    <span class="role-name">Admin</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Standard Login Form -->
+        <form th:action="@{/login}" method="POST" id="loginForm">
+            <!-- CSRF Protection Token handled automatically by Thymeleaf -->
+
+            <!-- Email Field -->
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <div class="input-wrapper">
+                    <input type="email" id="email" name="email" class="form-input"
+                           placeholder="Enter your email" required autofocus>
+                </div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-wrapper password-input-wrapper">
+                    <input type="password" id="password" name="password" class="form-input"
+                           placeholder="Enter your password" required>
+                    <button type="button" class="password-toggle" id="togglePasswordBtn">Show</button>
+                </div>
+            </div>
+
+            <!-- Forgot Password -->
+            <div class="forgot-password-wrap">
+                <a th:href="@{/forgot-password}" class="forgot-password-link">Forgot Password?</a>
+            </div>
+
+            <!-- Login Action Button -->
+            <button type="submit" class="login-btn">
+                <span>Login</span>
+            </button>
+        </form>
+
+        <!-- Footer: Create Account Link -->
+        <div class="card-footer-text">
+            <span>Don't have an account?</span>
+            <a th:href="@{/register}" class="create-account-link" id="registerLink">Create Account</a>
+        </div>
+    </div>
+
+    <!-- Interactive JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+            const roleButtons = document.querySelectorAll('.role-btn');
+            const registerLink = document.getElementById('registerLink');
+
+            // Set default initial fill for Buyer
+            const initialActiveBtn = document.querySelector('.role-btn.active');
+            if (initialActiveBtn) {
+                emailInput.value = initialActiveBtn.getAttribute('data-email');
+                passwordInput.value = initialActiveBtn.getAttribute('data-pass');
+            }
+
+            // Role selection buttons handler
+            roleButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    // Update active highlight visual
+                    roleButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Pre-fill email and password for chosen role
+                    const roleEmail = this.getAttribute('data-email');
+                    const rolePass = this.getAttribute('data-pass');
+                    const roleType = this.getAttribute('data-role');
+
+                    if (roleEmail) emailInput.value = roleEmail;
+                    if (rolePass) passwordInput.value = rolePass;
+
+                    // Update register link target role parameter if buyer/seller
+                    if (roleType === 'SELLER') {
+                        registerLink.href = '/register?role=SELLER';
+                    } else {
+                        registerLink.href = '/register?role=BUYER';
+                    }
+
+                    // Gentle focus on login button
+                    emailInput.classList.add('pulse-highlight');
+                    setTimeout(() => emailInput.classList.remove('pulse-highlight'), 300);
+                });
+            });
+
+            // Show / Hide password toggle
+            if (togglePasswordBtn && passwordInput) {
+                togglePasswordBtn.addEventListener('click', function () {
+                    const isPassword = passwordInput.getAttribute('type') === 'password';
+                    if (isPassword) {
+                        passwordInput.setAttribute('type', 'text');
+                        togglePasswordBtn.textContent = 'Hide';
+                    } else {
+                        passwordInput.setAttribute('type', 'password');
+                        togglePasswordBtn.textContent = 'Show';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

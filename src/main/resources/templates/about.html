@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('About SVJ MART')}"></head>
+<body>
+
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container-fluid px-3 px-lg-5 py-5">
+    <div class="max-w-900 mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-5">
+            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2 rounded-pill small mb-2">
+                <i class="bi bi-mortarboard-fill me-1"></i> B.Tech Artificial Intelligence and Data Science Capstone Project
+            </span>
+            <h1 class="fw-bold mb-3">SVJ MART</h1>
+            <p class="text-muted fs-5">Smart Shopping for Every Home &bull; Enterprise E-Commerce Platform</p>
+        </div>
+
+        <!-- Project Overview Card -->
+        <div class="card border-0 shadow-sm p-4 p-md-5 mb-4" style="border-radius: 20px;">
+            <h3 class="fw-bold mb-3 text-primary">Executive Summary</h3>
+            <p class="text-muted" style="line-height: 1.8;">
+                <strong>SVJ MART</strong> is a production-grade full-stack supermarket and home-essentials e-commerce platform built as a capstone project for the Bachelor of Technology in Artificial Intelligence and Data Science. The application unifies a comprehensive 16-aisle catalogue of everyday essentials tailored for Indian households with advanced machine-learning and heuristic recommendation engines, strict server-side transaction concurrency, multi-role access control, and real-time shipment status tracking.
+            </p>
+        </div>
+
+        <!-- AI Algorithms Deep-Dive -->
+        <div class="card border-0 shadow-sm p-4 p-md-5 mb-4" style="border-radius: 20px;">
+            <h3 class="fw-bold mb-4 text-primary"><i class="bi bi-cpu-fill me-2 text-info"></i> AI & Data Science Methodologies</h3>
+
+            <div class="row g-4">
+                <div class="col-12 col-md-6">
+                    <div class="p-3 bg-light rounded-3 border h-100">
+                        <div class="fw-bold text-dark mb-1"><i class="bi bi-stars text-info me-2"></i> 1. Content-Based Affinity Engine</div>
+                        <p class="small text-muted mb-0">
+                            Computes multidimensional similarity vectors across categories, nutritional attributes, dietary flags (Vegetarian vs Non-Veg), and brand loyalty to generate tailored storefront recommendations.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="p-3 bg-light rounded-3 border h-100">
+                        <div class="fw-bold text-dark mb-1"><i class="bi bi-basket3 text-success me-2"></i> 2. Market Basket Co-Occurrence Mining</div>
+                        <p class="small text-muted mb-0">
+                            Implements an association rule mining heuristic ("Frequently Bought Together") identifying culinary dependencies like Atta & Ghee, Dals & Sambar spices, Bread & Jams, and Cleaning solutions.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="p-3 bg-light rounded-3 border h-100">
+                        <div class="fw-bold text-dark mb-1"><i class="bi bi-calculator text-warning me-2"></i> 3. Dynamic Budget Knapsack Optimizer</div>
+                        <p class="small text-muted mb-0">
+                            Given a user's budgetary constraint (e.g., &#8377;500, &#8377;1000, &#8377;2000), the optimizer solves a constrained greedy knapsack problem to curate a nutrition-balanced grocery basket maximizing utility without exceeding the financial limit.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <div class="p-3 bg-light rounded-3 border h-100">
+                        <div class="fw-bold text-dark mb-1"><i class="bi bi-chat-left-dots text-primary me-2"></i> 4. Conversational NLP Recipe Resolver</div>
+                        <p class="small text-muted mb-0">
+                            Extracts intents from natural language queries (e.g. "What do I need for Pav Bhaji?", "High-protein breakfast") to resolve exact inventory ingredients and render instant 1-click cart addition.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full Technology Stack -->
+        <div class="card border-0 shadow-sm p-4 p-md-5 mb-4" style="border-radius: 20px;">
+            <h3 class="fw-bold mb-4 text-primary"><i class="bi bi-layers-fill me-2 text-dark"></i> Enterprise Architecture & Stack</h3>
+
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border rounded text-center">
+                        <div class="fw-bold small text-dark">Backend</div>
+                        <div class="text-muted extra-small">Java 21 LTS</div>
+                        <div class="text-muted extra-small">Spring Boot 3.3.4</div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border rounded text-center">
+                        <div class="fw-bold small text-dark">Frontend</div>
+                        <div class="text-muted extra-small">Thymeleaf Engine</div>
+                        <div class="text-muted extra-small">HTML5 & CSS3 Clamp</div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border rounded text-center">
+                        <div class="fw-bold small text-dark">Database</div>
+                        <div class="text-muted extra-small">H2 (File Persistent)</div>
+                        <div class="text-muted extra-small">MySQL Ready</div>
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border rounded text-center">
+                        <div class="fw-bold small text-dark">Security</div>
+                        <div class="text-muted extra-small">Spring Security 6</div>
+                        <div class="text-muted extra-small">BCrypt Hashing</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

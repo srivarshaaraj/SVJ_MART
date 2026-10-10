@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Order Management')}"></head>
+<body>
+
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<div class="container-fluid px-3 px-lg-5 py-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-truck text-primary me-2"></i> All Supermarket Orders</h2>
+            <p class="text-muted small mb-0">System-wide monitoring of customer transactions and delivery fulfillment</p>
+        </div>
+        <a th:href="@{/admin}" class="btn btn-outline-secondary btn-sm fw-semibold">Back to Admin</a>
+    </div>
+
+    <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light extra-small text-uppercase text-secondary">
+                    <tr>
+                        <th>Order Ref</th>
+                        <th>Date</th>
+                        <th>Buyer Account</th>
+                        <th>City & State</th>
+                        <th>Payment Mode</th>
+                        <th>Total (&#8377;)</th>
+                        <th>Current Status</th>
+                        <th class="text-end">Manage Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="o : ${orders}">
+                        <td>
+                            <a th:href="@{'/orders/' + ${o.orderNumber}}" class="font-monospace fw-bold small text-primary text-decoration-none" th:text="${o.orderNumber}">SVJ-20261010-XXXX</a>
+                        </td>
+                        <td class="small text-muted" th:text="${#temporals.format(o.orderDate, 'dd MMM yyyy, hh:mm a')}">Date</td>
+                        <td>
+                            <div class="small fw-semibold text-dark" th:text="${o.recipientName}">Buyer</div>
+                            <div class="extra-small text-muted" th:text="${o.user != null ? o.user.email : ''}">Email</div>
+                        </td>
+                        <td class="small text-muted" th:text="${o.city} + ', ' + ${o.state}">Bengaluru</td>
+                        <td>
+                            <span class="badge bg-light text-dark border small" th:text="${o.paymentMethod.displayName}">COD</span>
+                        </td>
+                        <td class="font-monospace fw-bold small text-dark" th:text="'&#8377;' + ${o.finalTotal}">&#8377;540</td>
+                        <td>
+                            <span class="badge py-2 px-3 small"
+                                  th:classappend="${o.status.name() == 'DELIVERED' ? 'bg-success' : (o.status.name() == 'CANCELLED' ? 'bg-danger' : (o.status.name() == 'OUT_FOR_DELIVERY' ? 'bg-warning text-dark' : 'bg-primary'))}"
+                                  th:text="${o.status.displayName}">Status</span>
+                        </td>
+                        <td class="text-end">
+                            <form th:action="@{/admin/orders/status}" method="POST" class="d-inline-flex align-items-center gap-1 m-0">
+                                <input type="hidden" name="orderId" th:value="${o.id}">
+                                <select name="status" class="form-select form-select-sm" style="width: auto;">
+                                    <option th:each="s : ${orderStatuses}" th:value="${s}" th:text="${s.displayName}" th:selected="${o.status == s}"></option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
