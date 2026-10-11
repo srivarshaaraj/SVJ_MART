@@ -1,0 +1,7 @@
+target/
+data/
+.git/
+.mvn/
+*.log
+*.ps1
+cookies.txt
